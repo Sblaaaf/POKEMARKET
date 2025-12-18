@@ -133,7 +133,7 @@ const App: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div className="grid grid-cols-1 gap-10">
                <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10">
                   <h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-red-600 rounded-full" />Analytiques du Marché</h3>
                   <Dashboard state={state} onFreeTokens={handleFreeTokens} />
@@ -165,7 +165,7 @@ const App: React.FC = () => {
       <div className="flex flex-col relative h-screen lg:ml-72">
         <TopBar tokens={state.tokens} activeTab={activeTab} navigateTo={navigateTo} onQuickPackClick={handleQuickPackClick} packCost={PACK_COST} />
         
-        <main id="main-content" className="flex-1 p-4 lg:p-12 mt-20 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+        <main id="main-content" className="flex-1 p-4 lg:p-12 lg:mt-8 lg:pt-14 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
           <div className="max-w-7xl mx-auto pb-20">
             {renderContent()}
           </div>

@@ -103,7 +103,7 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start"
+            className="grid grid-cols-1 gap-8 items-start"
           >
             {/* Standard Pack */}
             <div className="md:col-span-2 space-y-4 p-6 bg-slate-900/50 border border-slate-800 rounded-2xl">

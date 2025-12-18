@@ -44,7 +44,7 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
 
   return (
     <div id="dashboard-container" className="relative space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {stats.map((stat, i) => (
           <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex items-center gap-4 shadow-sm">
             <div className={`p-4 rounded-xl bg-slate-800/50 ${stat.color}`}>
@@ -58,7 +58,7 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-8">
         {/* Token History Chart */}
         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
           <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
