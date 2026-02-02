@@ -15,7 +15,7 @@ const TopBar: React.FC<TopBarProps> = ({ tokens, activeTab, navigateTo, onQuickP
   const isDashboard = activeTab === 'dashboard';
 
   return (
-    <header id="top-bar" className="fixed top-0 right-0 left-0 lg:left-72 h-20 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50 z-40 px-6 lg:px-10 flex items-center justify-between shadow-lg">
+    <header id="top-bar" className="fixed top-0 right-0 left-0 lg:left-72 h-20 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50 z-40 pl-20 pr-6 lg:px-10 flex items-center justify-between shadow-lg">
       <div className="flex items-center gap-4">
         {!isDashboard && (
           <motion.button

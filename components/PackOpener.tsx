@@ -97,7 +97,7 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
   };
 
   return (
-    <div id="pack-opener-container" className="w-full flex flex-col items-center justify-center min-h-[60vh] py-10">
+    <div id="pack-opener-container" className="w-full flex flex-col items-center justify-center min-h-[60vh]">
       <div className="max-w-4xl w-full text-center space-y-8">
         {!result && !isOpening && (
           <motion.div 

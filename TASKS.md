@@ -52,6 +52,4 @@ Ce document sert de spécification pour le développement du Poké-Market Dashbo
 - [ ] **Fonctionnalités de Collection**
   - [ ] **Statistiques par carte :** En cliquant sur une carte, afficher des détails supplémentaires (date d'obtention, nombre de fois possédée...).
 
-- [ ] **Optimisations Techniques**
-  - [ ] **Refactoring :** Isoler la logique de gestion de l'état (`state`) dans `App.tsx` dans un hook personnalisé (ex: `useGameState`) pour nettoyer le composant principal.
-  - [ ] **Accessibilité (A11y) :** Ajouter des attributs ARIA aux éléments interactifs (boutons, filtres) pour améliorer la navigation pour les utilisateurs de lecteurs d'écran.
+- [ ] 

@@ -165,7 +165,7 @@ const App: React.FC = () => {
       <div className="flex flex-col relative h-screen lg:ml-72">
         <TopBar tokens={state.tokens} activeTab={activeTab} navigateTo={navigateTo} onQuickPackClick={handleQuickPackClick} packCost={PACK_COST} />
         
-        <main id="main-content" className="flex-1 p-4 lg:p-12 lg:mt-8 lg:pt-14 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+        <main id="main-content" className="flex-1 p-4 lg:p-12 lg:mt-8 mt-20 lg:pt-14 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
           <div className="max-w-7xl mx-auto pb-20">
             {renderContent()}
           </div>
