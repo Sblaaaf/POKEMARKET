@@ -25,10 +25,27 @@ export interface BalanceEntry {
   amount: number;
 }
 
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+}
+
 export interface GameState {
   tokens: number;
   collection: Pokemon[];
   balanceHistory: BalanceEntry[];
   totalSpent: number;
   totalEarned: number;
+  unlockedAchievements: string[];
+}
+
+export type ToastType = 'success' | 'info' | 'error';
+
+export interface ToastMessage {
+  id: string;
+  message: string;
+  type: ToastType;
 }

@@ -6,6 +6,14 @@ export const PACK_COST = 5;
 export const GUARANTEED_PACK_COST = 30;
 export const GUARANTEED_COLLECTOR_PACK_COST = 100;
 
+export const ACHIEVEMENTS = [
+  { id: 'first_card', title: 'Premiers Pas', description: 'Obtenir votre première carte.', icon: '🎴' },
+  { id: 'collector_10', title: 'Collectionneur', description: 'Posséder 10 cartes différentes.', icon: '📚' },
+  { id: 'shiny_hunter', title: 'Chasseur de Shiny', description: 'Trouver votre premier Pokémon Shiny.', icon: '✨' },
+  { id: 'tycoon', title: 'Magnat du Marché', description: 'Gagner plus de 500 tokens au total.', icon: '💰' },
+  { id: 'fire_master', title: 'Maître du Feu', description: 'Posséder 3 Pokémon de type Feu.', icon: '🔥' },
+];
+
 export const RARITY_CONFIG = {
   [Rarity.COMMON]: {
     chance: 0.60,

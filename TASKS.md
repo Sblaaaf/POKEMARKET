@@ -39,21 +39,20 @@ Ce document sert de spécification pour le développement du Poké-Market Dashbo
 - [x] **Mise à jour Visuelle :** Nouvelle interface d'évolution avec silhouette et effets de particules.
 - [x] **Intégration PokéAPI :** Recherche automatique dans la chaîne d'évolution.
 
+### V1.5 - UX, Succès & Filtres Avancés
+- [x] **Système de Notifications Toast :** Remplacement des alertes JS par des messages stylisés.
+- [x] **Système de Succès (Achievements) :** Badges débloquables basés sur la progression.
+- [x] **Filtres Avancés :** Filtrage par Type et direction de tri (Asc/Desc).
+- [x] **Refactoring useGameState :** Logique extraite dans un hook personnalisé pour la clarté.
+- [x] **Effet de Transformation :** Amélioration visuelle de l'écran d'évolution.
+
 ---
 
 ## 🚀 Roadmap & Axes d'Amélioration Suggérés
 
-### V1.5 - Prochaines Étapes Suggérées
+### V1.6 - Interactions et Personnalisation
 
-- [ ] **Amélioration de l'Expérience Utilisateur (UX)**
-  - [ ] **Notifications "Toast" :** Remplacer les alertes JavaScript natives par des notifications non-bloquantes stylisées.
-  - [ ] **Effet de Transformation :** Ajouter une transition CSS plus fluide sur la carte lors de l'évolution.
-
-- [ ] **Système de Succès (Achievements)**
-  - [ ] Débloquer des titres ou des badges basés sur la collection (ex: "Maître du Feu", "Collectionneur de Légendes").
-
-- [ ] **Fonctionnalités de Tri Avancées**
-  - [ ] Filtrer par type de Pokémon (Feu, Eau, etc.) dans la collection.
-
-- [ ] **Optimisations Techniques**
-  - [ ] **Refactoring :** Isoler la logique de gestion de l'état dans un hook personnalisé `useGameState`.
+- [ ] **Deck Building (Bêta) :** Permettre de créer des "équipes" de 6 Pokémon favoris.
+- [ ] **Marché Dynamique :** Les prix de revente varient légèrement toutes les 5 minutes.
+- [ ] **Historique des Transactions :** Une vue détaillée des achats/ventes récents dans les statistiques.
+- [ ] **Mode Nuit / Mode Jour :** Personnalisation des thèmes de l'interface.
