@@ -16,13 +16,16 @@
 - [x] **Mode Sombre / Lumineux :** Toggle de thème dans la barre latérale pour une personnalisation complète.
 - [x] **Refactoring technique :** State enrichi et logique de marché centralisée.
 
----
-
-## 🚀 Roadmap & Axes d'Amélioration Suggérés
-
 ### V1.7 - Engagement et Gamification
-
+- [x] **Facilité UX :** Possibilité de sélectionner une quantité jusqu'à 10 pour TOUS les types de boosters (Standard, Garanti, Collector).
 - [ ] **Simulateur de Combat (Concept) :** Une vue pour comparer la "puissance" de son Équipe (basée sur la rareté/valeur) contre des équipes générées.
 - [ ] **Missions Quotidiennes :** "Vendre 3 Pokémon de type Eau", "Ouvrir 5 boosters" pour gagner des bonus.
 - [ ] **Pokedex Global :** Une vue montrant tous les Pokémon découverts vs total disponible dans l'API.
 - [ ] **Vente aux Enchères :** Possibilité de mettre en vente une carte à un prix élevé pendant un temps limité (risque/récompense).
+
+---
+
+## 🚀 Roadmap & Axes d'Amélioration Suggérés
+
+- [ ] **Notifications Raffinées :** Améliorer le système de toast pour inclure des icônes de Pokémon.
+- [ ] **Historique Visuel :** Ajouter des graphiques de types dans les statistiques.

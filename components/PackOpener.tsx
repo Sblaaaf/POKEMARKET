@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ShoppingBag, ShieldCheck, Gem } from 'lucide-react';
@@ -15,7 +16,9 @@ interface PackOpenerProps {
 
 const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, setResult }) => {
   const [isOpening, setIsOpening] = useState(false);
-  const [quantity, setQuantity] = useState(1);
+  const [stdQty, setStdQty] = useState(1);
+  const [guarQty, setGuarQty] = useState(1);
+  const [collQty, setCollQty] = useState(1);
 
   const determineRarity = (): Rarity => {
     const rand = Math.random();
@@ -44,14 +47,16 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
 
     switch (packType) {
       case 'standard':
-        cost = PACK_COST * quantity;
-        numPacks = quantity;
+        cost = PACK_COST * stdQty;
+        numPacks = stdQty;
         break;
       case 'guaranteed':
-        cost = GUARANTEED_PACK_COST;
+        cost = GUARANTEED_PACK_COST * guarQty;
+        numPacks = guarQty;
         break;
       case 'collector':
-        cost = GUARANTEED_COLLECTOR_PACK_COST;
+        cost = GUARANTEED_COLLECTOR_PACK_COST * collQty;
+        numPacks = collQty;
         break;
     }
 
@@ -62,8 +67,6 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
 
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // FIX: Explicitly type the async function's return to satisfy the type predicate below.
-    // This prevents TypeScript from inferring a too-specific type for `instanceId`.
     const packPromises = Array(numPacks).fill(0).map(async (): Promise<Pokemon | null> => {
       const id = getRandomId();
       const pokeData = await fetchPokemonData(id);
@@ -96,6 +99,8 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
     setIsOpening(false);
   };
 
+  const qtyOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   return (
     <div id="pack-opener-container" className="w-full flex flex-col items-center justify-center min-h-[60vh]">
       <div className="max-w-4xl w-full text-center space-y-8">
@@ -103,71 +108,110 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 gap-8 items-start"
+            className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch"
           >
             {/* Standard Pack */}
-            <div className="md:col-span-2 space-y-4 p-6 bg-slate-900/50 border border-slate-800 rounded-2xl">
-              <h2 className="text-3xl font-black text-white">Booster Standard</h2>
-              <div className="relative mx-auto w-48 h-64 bg-slate-800 rounded-2xl border-4 border-slate-700 flex items-center justify-center overflow-hidden shadow-2xl group cursor-pointer" onClick={() => handleOpenPack('standard')}>
+            <div className="lg:col-span-1 space-y-4 p-6 bg-slate-900/50 border border-slate-800 rounded-3xl flex flex-col">
+              <h2 className="text-2xl font-black text-white">Standard</h2>
+              <div className="relative mx-auto w-32 h-44 bg-slate-800 rounded-2xl border-2 border-slate-700 flex items-center justify-center overflow-hidden shadow-2xl group cursor-pointer" onClick={() => handleOpenPack('standard')}>
                 <div className="absolute inset-0 bg-gradient-to-br from-red-500 to-red-800 opacity-80" />
-                <div className="absolute top-1/2 left-0 right-0 h-4 bg-black -translate-y-1/2 z-10" /><div className="absolute top-1/2 left-1/2 w-16 h-16 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 border-4 border-black z-20 flex items-center justify-center"><div className="w-8 h-8 bg-slate-200 rounded-full border-2 border-slate-400" /></div>
-                <Sparkles className="absolute top-4 right-4 text-white opacity-40 group-hover:opacity-100 transition-opacity" /><div className="z-30 mt-32 text-white font-black text-xl italic tracking-widest drop-shadow-lg">BOOSTER</div>
+                <div className="absolute top-1/2 left-0 right-0 h-3 bg-black -translate-y-1/2 z-10" />
+                <div className="absolute top-1/2 left-1/2 w-10 h-10 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 border-2 border-black z-20 flex items-center justify-center">
+                  <div className="w-5 h-5 bg-slate-200 rounded-full border border-slate-400" />
+                </div>
+                <div className="z-30 mt-20 text-white font-black text-[10px] italic tracking-widest drop-shadow-lg uppercase">Booster</div>
               </div>
-              <div className="flex items-center justify-center gap-4">
-                 <label htmlFor="quantity" className="text-slate-400 font-bold">Quantité:</label>
-                 <select id="quantity" value={quantity} onChange={e => setQuantity(Number(e.target.value))} className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1 text-white">
-                    {[1,2,3,4,5].map(q => <option key={q} value={q}>{q}</option>)}
-                 </select>
+              
+              <div className="flex-1 flex flex-col justify-end space-y-4">
+                <div className="flex items-center justify-between px-2">
+                   <label htmlFor="stdQty" className="text-slate-500 font-bold text-xs uppercase tracking-tighter">Quantité</label>
+                   <select id="stdQty" value={stdQty} onChange={e => setStdQty(Number(e.target.value))} className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-sm focus:ring-1 focus:ring-red-500 outline-none">
+                      {qtyOptions.map(q => <option key={q} value={q}>{q}</option>)}
+                   </select>
+                </div>
+                <button onClick={() => handleOpenPack('standard')} disabled={tokens < (PACK_COST * stdQty)} className={`w-full py-3 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${tokens >= (PACK_COST * stdQty) ? 'bg-red-600 hover:bg-red-500 text-white shadow-red-600/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
+                  <ShoppingBag size={18} /> {PACK_COST * stdQty} $
+                </button>
               </div>
-              <button onClick={() => handleOpenPack('standard')} disabled={tokens < (PACK_COST * quantity)} className={`w-full py-4 rounded-xl font-black text-lg flex items-center justify-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${tokens >= (PACK_COST * quantity) ? 'bg-red-600 hover:bg-red-500 text-white shadow-red-600/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
-                <ShoppingBag size={24} /> ACHETER ({PACK_COST * quantity} TOKENS)
-              </button>
             </div>
 
-            {/* Guaranteed & Collector Packs */}
-            <div className="space-y-6">
-              <div className="space-y-4 p-6 bg-slate-900/50 border border-slate-800 rounded-2xl">
-                <h3 className="text-2xl font-black text-amber-400">Booster Garanti</h3>
-                <p className="text-slate-400 text-sm">Garantit une carte Rare, Épique ou Légendaire.</p>
-                <button onClick={() => handleOpenPack('guaranteed')} disabled={tokens < GUARANTEED_PACK_COST} className={`w-full py-3 rounded-xl font-black text-base flex items-center justify-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${tokens >= GUARANTEED_PACK_COST ? 'bg-amber-500 hover:bg-amber-400 text-white shadow-amber-500/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
-                  <ShieldCheck size={20} /> ({GUARANTEED_PACK_COST} TOKENS)
-                </button>
+            {/* Guaranteed Pack */}
+            <div className="lg:col-span-1 space-y-4 p-6 bg-slate-900/50 border border-slate-800 rounded-3xl flex flex-col">
+              <h2 className="text-2xl font-black text-amber-400">Garanti</h2>
+              <div className="relative mx-auto w-32 h-44 bg-slate-800 rounded-2xl border-2 border-slate-700 flex items-center justify-center overflow-hidden shadow-2xl group cursor-pointer" onClick={() => handleOpenPack('guaranteed')}>
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-amber-700 opacity-80" />
+                <div className="absolute top-1/2 left-0 right-0 h-3 bg-black -translate-y-1/2 z-10" />
+                <div className="absolute top-1/2 left-1/2 w-10 h-10 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 border-2 border-black z-20 flex items-center justify-center">
+                  <ShieldCheck className="text-amber-500" size={16} />
+                </div>
               </div>
-              <div className="space-y-4 p-6 bg-slate-900/50 border border-fuchsia-500/30 rounded-2xl">
-                <h3 className="text-2xl font-black text-fuchsia-400">Collector Garanti</h3>
-                <p className="text-slate-400 text-sm">Garantit une carte Collector.</p>
-                <button onClick={() => handleOpenPack('collector')} disabled={tokens < GUARANTEED_COLLECTOR_PACK_COST} className={`w-full py-3 rounded-xl font-black text-base flex items-center justify-center gap-3 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${tokens >= GUARANTEED_COLLECTOR_PACK_COST ? 'bg-fuchsia-600 hover:bg-fuchsia-500 text-white shadow-fuchsia-600/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
-                  <Gem size={20} /> ({GUARANTEED_COLLECTOR_PACK_COST} TOKENS)
+              
+              <div className="flex-1 flex flex-col justify-end space-y-4">
+                <p className="text-slate-500 text-[10px] font-bold uppercase">Rare à Légendaire</p>
+                <div className="flex items-center justify-between px-2">
+                   <label htmlFor="guarQty" className="text-slate-500 font-bold text-xs uppercase tracking-tighter">Quantité</label>
+                   <select id="guarQty" value={guarQty} onChange={e => setGuarQty(Number(e.target.value))} className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-sm focus:ring-1 focus:ring-amber-500 outline-none">
+                      {qtyOptions.map(q => <option key={q} value={q}>{q}</option>)}
+                   </select>
+                </div>
+                <button onClick={() => handleOpenPack('guaranteed')} disabled={tokens < (GUARANTEED_PACK_COST * guarQty)} className={`w-full py-3 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${tokens >= (GUARANTEED_PACK_COST * guarQty) ? 'bg-amber-500 hover:bg-amber-400 text-white shadow-amber-500/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
+                  <ShieldCheck size={18} /> {GUARANTEED_PACK_COST * guarQty} $
                 </button>
               </div>
             </div>
-            {tokens < PACK_COST && <p className="text-red-400 text-sm font-bold md:col-span-3">Solde insuffisant pour le booster standard</p>}
+
+            {/* Collector Pack */}
+            <div className="lg:col-span-1 space-y-4 p-6 bg-slate-900/50 border border-fuchsia-500/20 rounded-3xl flex flex-col">
+              <h2 className="text-2xl font-black text-fuchsia-400">Collector</h2>
+              <div className="relative mx-auto w-32 h-44 bg-slate-800 rounded-2xl border-2 border-slate-700 flex items-center justify-center overflow-hidden shadow-2xl group cursor-pointer" onClick={() => handleOpenPack('collector')}>
+                <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-600 to-fuchsia-900 opacity-80" />
+                <div className="absolute top-1/2 left-0 right-0 h-3 bg-black -translate-y-1/2 z-10" />
+                <div className="absolute top-1/2 left-1/2 w-10 h-10 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 border-2 border-black z-20 flex items-center justify-center">
+                  <Gem className="text-fuchsia-500" size={16} />
+                </div>
+              </div>
+              
+              <div className="flex-1 flex flex-col justify-end space-y-4">
+                <p className="text-slate-500 text-[10px] font-bold uppercase">Collector Garanti</p>
+                <div className="flex items-center justify-between px-2">
+                   <label htmlFor="collQty" className="text-slate-500 font-bold text-xs uppercase tracking-tighter">Quantité</label>
+                   <select id="collQty" value={collQty} onChange={e => setCollQty(Number(e.target.value))} className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-white text-sm focus:ring-1 focus:ring-fuchsia-500 outline-none">
+                      {qtyOptions.map(q => <option key={q} value={q}>{q}</option>)}
+                   </select>
+                </div>
+                <button onClick={() => handleOpenPack('collector')} disabled={tokens < (GUARANTEED_COLLECTOR_PACK_COST * collQty)} className={`w-full py-3 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${tokens >= (GUARANTEED_COLLECTOR_PACK_COST * collQty) ? 'bg-fuchsia-600 hover:bg-fuchsia-500 text-white shadow-fuchsia-600/20' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}>
+                  <Gem size={18} /> {GUARANTEED_COLLECTOR_PACK_COST * collQty} $
+                </button>
+              </div>
+            </div>
+
+            {tokens < PACK_COST && <p className="text-red-400 text-[10px] font-black uppercase tracking-widest lg:col-span-3">Solde insuffisant pour un booster</p>}
           </motion.div>
         )}
 
         {isOpening && (
           <div className="flex flex-col items-center gap-6 py-12">
             <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }} className="w-24 h-24 border-8 border-red-600 border-t-slate-800 rounded-full" />
-            <div className="space-y-2"><h3 className="text-2xl font-black text-white italic animate-pulse">OUVERTURE DU PACK...</h3><p className="text-slate-400">Le destin est en marche</p></div>
+            <div className="space-y-2"><h3 className="text-2xl font-black text-white italic animate-pulse uppercase tracking-tighter">Ouverture des Packs...</h3><p className="text-slate-400 font-bold text-sm uppercase tracking-widest opacity-60">Le destin est en marche</p></div>
           </div>
         )}
 
         <AnimatePresence>
           {result && !isOpening && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-8">
-              <div className="flex flex-wrap justify-center gap-8">
+              <div className="flex flex-wrap justify-center gap-6">
                 {result.map((pokemon, index) => (
                   <motion.div
                     key={pokemon.instanceId}
                     initial={{ scale: 0.5, opacity: 0, y: 50 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
-                    transition={{ type: "spring", damping: 15, stiffness: 120, delay: index * 0.1 }}
+                    transition={{ type: "spring", damping: 15, stiffness: 120, delay: index * 0.05 }}
                   >
                     <PokemonCard pokemon={pokemon} interactive={false} />
                   </motion.div>
                 ))}
               </div>
-              <button onClick={() => setResult(null)} className="mt-8 text-slate-400 hover:text-white font-bold py-2 transition-colors">Ouvrir un autre pack</button>
+              <button onClick={() => setResult(null)} className="bg-slate-800 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-all border border-slate-700">Retour au Market</button>
             </motion.div>
           )}
         </AnimatePresence>
