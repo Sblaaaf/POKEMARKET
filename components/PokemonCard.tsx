@@ -1,18 +1,19 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Sparkles, Coins, Star } from 'lucide-react';
-import { Pokemon } from '../types';
+import { Sparkles, Coins, Star, Zap } from 'lucide-react';
+import { Pokemon, Rarity } from '../types';
 import { RARITY_CONFIG, TYPE_COLORS } from '../constants';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
   onSell?: (id: string) => void;
   onToggleFavorite?: (id: string) => void;
+  onEvolve?: (id: string) => void;
   interactive?: boolean;
 }
 
-const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavorite, interactive = true }) => {
+const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavorite, onEvolve, interactive = true }) => {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
@@ -47,6 +48,17 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
 
   const rarityInfo = RARITY_CONFIG[pokemon.rarity];
 
+  // Evolution cost based on current rarity
+  const getEvolveCost = () => {
+    if (pokemon.rarity === Rarity.COMMON) return 10;
+    if (pokemon.rarity === Rarity.RARE) return 20;
+    if (pokemon.rarity === Rarity.EPIC) return 30;
+    return 0;
+  };
+
+  const evolveCost = getEvolveCost();
+  const canEvolve = pokemon.rarity !== Rarity.LEGENDARY && pokemon.rarity !== Rarity.COLLECTOR;
+
   return (
     <motion.div
       ref={cardRef}
@@ -58,7 +70,6 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
     >
       <div className={`relative w-full h-full rounded-xl overflow-hidden border-4 ${rarityInfo.borderColor} ${rarityInfo.color} shadow-2xl transition-all duration-300 flex flex-col p-3 gap-2`}>
         
-        {/* Shiny Bug Fix: Use 'overlay' which is less harsh than 'color-dodge' and avoids chromatic aberration. */}
         {pokemon.isShiny && (
           <motion.div 
             className="absolute inset-0 pointer-events-none mix-blend-overlay z-10"
@@ -90,15 +101,27 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
           <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm ${rarityInfo.textColor}`}>
             {rarityInfo.label}
           </span>
-          {onToggleFavorite && (
-            <button
-              onClick={(e) => { e.stopPropagation(); onToggleFavorite(pokemon.instanceId); }}
-              className="text-yellow-400 p-1 rounded-full hover:bg-black/20 transition-colors"
-              aria-label="Toggle favorite"
-            >
-              <Star size={18} className={`transition-all ${pokemon.isFavorite ? 'fill-current text-yellow-300' : 'text-white/50'}`} />
-            </button>
-          )}
+          <div className="flex gap-1">
+            {onEvolve && canEvolve && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onEvolve(pokemon.instanceId); }}
+                  className="bg-blue-600/80 hover:bg-blue-500 text-white p-1 rounded-lg transition-all flex items-center gap-1 group/evolve shadow-lg"
+                  title={`Évoluer pour ${evolveCost} Tokens`}
+                >
+                  <Zap size={14} className="group-hover/evolve:animate-bounce" />
+                  <span className="text-[10px] font-black pr-1">{evolveCost}</span>
+                </button>
+            )}
+            {onToggleFavorite && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleFavorite(pokemon.instanceId); }}
+                className="text-yellow-400 p-1 rounded-full hover:bg-black/20 transition-colors"
+                aria-label="Toggle favorite"
+              >
+                <Star size={18} className={`transition-all ${pokemon.isFavorite ? 'fill-current text-yellow-300' : 'text-white/50'}`} />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 bg-white/10 backdrop-blur-md rounded-lg overflow-hidden relative flex items-center justify-center border border-white/20">

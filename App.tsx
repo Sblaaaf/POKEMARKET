@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Loader2 } from 'lucide-react';
+// Added motion import to fix line 249 error
+import { motion } from 'framer-motion';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import PackOpener from './components/PackOpener';
@@ -8,13 +10,15 @@ import Collection from './components/Collection';
 import Dashboard from './components/Dashboard';
 import PokemonCard from './components/PokemonCard';
 import ConfirmationDialog from './components/ConfirmationDialog';
-import { GameState, Pokemon, BalanceEntry } from './types';
-import { INITIAL_TOKENS, PACK_COST } from './constants';
+import { GameState, Pokemon, BalanceEntry, Rarity } from './types';
+import { INITIAL_TOKENS, PACK_COST, RARITY_CONFIG } from './constants';
+import { fetchEvolutionData } from './services/pokeApi';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [packResult, setPackResult] = useState<Pokemon[] | null>(null);
   const [pokemonForSale, setPokemonForSale] = useState<Pokemon | null>(null);
+  const [isEvolving, setIsEvolving] = useState(false);
   const [state, setState] = useState<GameState>(() => {
     const saved = localStorage.getItem('pokemarket_state');
     if (saved) return JSON.parse(saved);
@@ -97,6 +101,75 @@ const App: React.FC = () => {
       )
     }));
   };
+
+  const handleEvolve = async (instanceId: string) => {
+    const pokemon = state.collection.find(p => p.instanceId === instanceId);
+    if (!pokemon) return;
+
+    // Define cost and next rarity
+    let cost = 0;
+    let nextRarity = pokemon.rarity;
+
+    if (pokemon.rarity === Rarity.COMMON) {
+      cost = 10;
+      nextRarity = Rarity.RARE;
+    } else if (pokemon.rarity === Rarity.RARE) {
+      cost = 20;
+      nextRarity = Rarity.EPIC;
+    } else if (pokemon.rarity === Rarity.EPIC) {
+      cost = 30;
+      nextRarity = Rarity.LEGENDARY;
+    } else {
+      alert("Ce Pokémon a déjà atteint son stade d'évolution maximal !");
+      return;
+    }
+
+    if (state.tokens < cost) {
+      alert("Tokens insuffisants pour l'évolution !");
+      return;
+    }
+
+    setIsEvolving(true);
+
+    try {
+      const evolvedData = await fetchEvolutionData(pokemon.id);
+
+      if (evolvedData) {
+        // Calculate new resale value
+        const values = RARITY_CONFIG[nextRarity].possibleValues;
+        const newResaleValue = values[Math.floor(Math.random() * values.length)];
+
+        const evolvedPokemon: Pokemon = {
+          ...pokemon,
+          id: evolvedData.id,
+          name: evolvedData.name,
+          imageUrl: evolvedData.imageUrl,
+          types: evolvedData.types,
+          rarity: nextRarity,
+          resaleValue: newResaleValue,
+          timestamp: Date.now(), // Update timestamp to show as "recent"
+        };
+
+        setState(prev => {
+          const newTokens = prev.tokens - cost;
+          return {
+            ...prev,
+            tokens: newTokens,
+            collection: prev.collection.map(p => p.instanceId === instanceId ? evolvedPokemon : p),
+            balanceHistory: updateBalanceHistory(newTokens),
+            totalSpent: prev.totalSpent + cost
+          };
+        });
+      } else {
+        alert("Ce Pokémon n'a pas d'évolution connue !");
+      }
+    } catch (error) {
+      console.error("Evolution error:", error);
+      alert("Une erreur est survenue lors de l'évolution.");
+    } finally {
+      setIsEvolving(false);
+    }
+  };
   
   const handleFreeTokens = () => {
     setState(prev => {
@@ -114,7 +187,7 @@ const App: React.FC = () => {
       case 'shop':
         return <PackOpener tokens={state.tokens} onPurchase={handlePurchase} result={packResult} setResult={setPackResult} />;
       case 'collection':
-        return <Collection collection={state.collection} onSell={initiateSell} onToggleFavorite={handleToggleFavorite} />;
+        return <Collection collection={state.collection} onSell={initiateSell} onToggleFavorite={handleToggleFavorite} onEvolve={handleEvolve} />;
       case 'analytics':
         return <Dashboard state={state} onFreeTokens={handleFreeTokens} />;
       case 'dashboard':
@@ -171,6 +244,23 @@ const App: React.FC = () => {
           </div>
         </main>
       </div>
+
+      {isEvolving && (
+        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-[200] flex flex-col items-center justify-center gap-6">
+            <div className="relative w-48 h-48">
+                <motion.div 
+                    animate={{ scale: [1, 1.5, 1], rotate: 360 }} 
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full"
+                />
+                <Loader2 size={80} className="text-blue-500 animate-spin absolute inset-0 m-auto" />
+            </div>
+            <div className="text-center space-y-2">
+                <h2 className="text-3xl font-black text-white italic tracking-tighter animate-pulse">ÉVOLUTION EN COURS...</h2>
+                <p className="text-slate-400 font-bold">Votre Pokémon change de forme !</p>
+            </div>
+        </div>
+      )}
 
       <ConfirmationDialog pokemon={pokemonForSale} onConfirm={confirmSell} onCancel={cancelSell} />
     </div>

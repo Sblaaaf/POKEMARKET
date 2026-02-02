@@ -9,9 +9,10 @@ interface CollectionProps {
   collection: Pokemon[];
   onSell: (id: string) => void;
   onToggleFavorite: (id: string) => void;
+  onEvolve: (id: string) => void;
 }
 
-const Collection: React.FC<CollectionProps> = ({ collection, onSell, onToggleFavorite }) => {
+const Collection: React.FC<CollectionProps> = ({ collection, onSell, onToggleFavorite, onEvolve }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'carousel'>('grid');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [filterRarity, setFilterRarity] = useState<string>('all');
@@ -25,7 +26,6 @@ const Collection: React.FC<CollectionProps> = ({ collection, onSell, onToggleFav
     const matchesFavorites = !showFavoritesOnly || p.isFavorite;
     return matchesRarity && matchesSearch && matchesFavorites;
   }).sort((a, b) => {
-    // Sort by favorite status first for all sort options
     if (a.isFavorite !== b.isFavorite) {
       return a.isFavorite ? -1 : 1;
     }
@@ -119,7 +119,12 @@ const Collection: React.FC<CollectionProps> = ({ collection, onSell, onToggleFav
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 justify-items-center pb-20 mt-4">
           {filteredCollection.map(pokemon => (
             <motion.div key={pokemon.instanceId} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-              <PokemonCard pokemon={pokemon} onSell={onSell} onToggleFavorite={onToggleFavorite} />
+              <PokemonCard 
+                pokemon={pokemon} 
+                onSell={onSell} 
+                onToggleFavorite={onToggleFavorite} 
+                onEvolve={onEvolve}
+              />
             </motion.div>
           ))}
         </div>
@@ -134,7 +139,12 @@ const Collection: React.FC<CollectionProps> = ({ collection, onSell, onToggleFav
             <div className="relative w-full max-w-[320px] h-[480px]">
               <AnimatePresence mode="wait">
                 <motion.div key={currentItem.instanceId} initial={{ opacity: 0, x: 100, rotateY: 45 }} animate={{ opacity: 1, x: 0, rotateY: 0 }} exit={{ opacity: 0, x: -100, rotateY: -45 }} transition={{ type: "spring", damping: 15 }} className="absolute inset-0 flex items-center justify-center">
-                  <PokemonCard pokemon={currentItem} onSell={onSell} onToggleFavorite={onToggleFavorite} />
+                  <PokemonCard 
+                    pokemon={currentItem} 
+                    onSell={onSell} 
+                    onToggleFavorite={onToggleFavorite} 
+                    onEvolve={onEvolve}
+                  />
                 </motion.div>
               </AnimatePresence>
             </div>

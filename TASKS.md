@@ -33,23 +33,27 @@ Ce document sert de spécification pour le développement du Poké-Market Dashbo
 - [x] **Achat multiple de boosters :** Ajout d'un sélecteur pour acheter jusqu'à 5 packs standards en même temps.
 - [x] **Nouveau "Booster Collector Garanti" :** Ajout d'une option d'achat à 100 tokens pour une carte Collector garantie.
 
+### V1.4 - Système d'Évolution
+- [x] **Fonctionnalité d'Évolution :** Les Pokémon peuvent maintenant évoluer vers leur stade supérieur.
+- [x] **Coûts Dynamiques :** Evolution Common->Rare (10), Rare->Epic (20), Epic->Legendary (30).
+- [x] **Mise à jour Visuelle :** Nouvelle interface d'évolution avec silhouette et effets de particules.
+- [x] **Intégration PokéAPI :** Recherche automatique dans la chaîne d'évolution.
+
 ---
 
 ## 🚀 Roadmap & Axes d'Amélioration Suggérés
 
-### V1.4 - Prochaines Étapes Suggérées
-
-- [ ] **Fonctionnalité d'Évolution (À CONFIRMER)**
-  - [ ] Si l'API le permet de manière simple, créer une fonction d'évolution pour les Pokémon de la collection.
-    - [ ] Au clic sur la carte, un bouton "Évoluer" apparaît.
-    - [ ] Le coût en tokens serait progressif en fonction de la rareté (max 30 tokens).
-    - [ ] L'évolution augmente la valeur de revente de la carte et met à jour son image.
+### V1.5 - Prochaines Étapes Suggérées
 
 - [ ] **Amélioration de l'Expérience Utilisateur (UX)**
-  - [ ] **Notifications "Toast" :** Ajouter des notifications non-bloquantes pour les actions réussies (achat, vente) pour un feedback visuel clair.
-  - [ ] **Indicateurs de chargement :** Afficher un indicateur de chargement plus subtil sur les boutons d'achat pendant la recherche d'un Pokémon.
+  - [ ] **Notifications "Toast" :** Remplacer les alertes JavaScript natives par des notifications non-bloquantes stylisées.
+  - [ ] **Effet de Transformation :** Ajouter une transition CSS plus fluide sur la carte lors de l'évolution.
 
-- [ ] **Fonctionnalités de Collection**
-  - [ ] **Statistiques par carte :** En cliquant sur une carte, afficher des détails supplémentaires (date d'obtention, nombre de fois possédée...).
+- [ ] **Système de Succès (Achievements)**
+  - [ ] Débloquer des titres ou des badges basés sur la collection (ex: "Maître du Feu", "Collectionneur de Légendes").
 
-- [ ] 
+- [ ] **Fonctionnalités de Tri Avancées**
+  - [ ] Filtrer par type de Pokémon (Feu, Eau, etc.) dans la collection.
+
+- [ ] **Optimisations Techniques**
+  - [ ] **Refactoring :** Isoler la logique de gestion de l'état dans un hook personnalisé `useGameState`.
