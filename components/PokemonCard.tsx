@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Sparkles, Coins, Star, Zap } from 'lucide-react';
+import { Sparkles, Coins, Star, Zap, Shield } from 'lucide-react';
 import { Pokemon, Rarity } from '../types';
 import { RARITY_CONFIG, TYPE_COLORS } from '../constants';
 
@@ -9,11 +9,13 @@ interface PokemonCardProps {
   pokemon: Pokemon;
   onSell?: (id: string) => void;
   onToggleFavorite?: (id: string) => void;
+  onToggleDeck?: (id: string) => void;
   onEvolve?: (id: string) => void;
+  isInDeck?: boolean;
   interactive?: boolean;
 }
 
-const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavorite, onEvolve, interactive = true }) => {
+const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavorite, onToggleDeck, onEvolve, isInDeck, interactive = true }) => {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
@@ -48,7 +50,6 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
 
   const rarityInfo = RARITY_CONFIG[pokemon.rarity];
 
-  // Evolution cost based on current rarity
   const getEvolveCost = () => {
     if (pokemon.rarity === Rarity.COMMON) return 10;
     if (pokemon.rarity === Rarity.RARE) return 20;
@@ -70,6 +71,12 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
     >
       <div className={`relative w-full h-full rounded-xl overflow-hidden border-4 ${rarityInfo.borderColor} ${rarityInfo.color} shadow-2xl transition-all duration-300 flex flex-col p-3 gap-2`}>
         
+        {isInDeck && (
+          <div className="absolute top-2 left-2 z-40 bg-white text-blue-600 px-2 py-0.5 rounded-full text-[9px] font-black shadow-lg flex items-center gap-1 border border-blue-100">
+             <Shield size={10} fill="currentColor" /> SQUAD
+          </div>
+        )}
+
         {pokemon.isShiny && (
           <motion.div 
             className="absolute inset-0 pointer-events-none mix-blend-overlay z-10"
@@ -87,21 +94,17 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
           />
         )}
 
-        {pokemon.isShiny && (
-          <div className="absolute inset-0 z-20 pointer-events-none opacity-40 overflow-hidden">
-             {[...Array(12)].map((_, i) => (
-                <div key={i} className="absolute animate-pulse" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s` }}>
-                  <Sparkles size={12} className="text-white" />
-                </div>
-             ))}
-          </div>
-        )}
-
-        <div className="flex justify-between items-start z-30">
-          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm ${rarityInfo.textColor}`}>
-            {rarityInfo.label}
-          </span>
+        <div className="flex justify-end items-start z-30">
           <div className="flex gap-1">
+            {onToggleDeck && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleDeck(pokemon.instanceId); }}
+                className={`p-1 rounded-lg transition-all ${isInDeck ? 'bg-blue-500 text-white' : 'bg-black/20 text-white/50 hover:text-white'}`}
+                title={isInDeck ? "Retirer de l'équipe" : "Ajouter à l'équipe"}
+              >
+                <Shield size={16} />
+              </button>
+            )}
             {onEvolve && canEvolve && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onEvolve(pokemon.instanceId); }}
@@ -116,7 +119,6 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
               <button
                 onClick={(e) => { e.stopPropagation(); onToggleFavorite(pokemon.instanceId); }}
                 className="text-yellow-400 p-1 rounded-full hover:bg-black/20 transition-colors"
-                aria-label="Toggle favorite"
               >
                 <Star size={18} className={`transition-all ${pokemon.isFavorite ? 'fill-current text-yellow-300' : 'text-white/50'}`} />
               </button>
@@ -133,31 +135,36 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
             />
         </div>
 
-        <div className="z-30 text-white space-y-2">
-          <h3 className="font-bold capitalize text-lg tracking-wide truncate drop-shadow-md">
-            {pokemon.name}
-          </h3>
+        <div className="z-30 text-white space-y-1">
+          <div className="flex justify-between items-center">
+            <h3 className="font-bold capitalize text-sm tracking-wide truncate drop-shadow-md">
+              {pokemon.name}
+            </h3>
+            <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm ${rarityInfo.textColor}`}>
+              {rarityInfo.label}
+            </span>
+          </div>
           
           <div className="flex flex-wrap gap-1">
             {pokemon.types.map(type => (
-              <span key={type} className={`text-[9px] uppercase font-black px-2 py-0.5 rounded ${TYPE_COLORS[type] || 'bg-slate-500'} shadow-sm`}>
+              <span key={type} className={`text-[8px] uppercase font-black px-1.5 py-0.5 rounded ${TYPE_COLORS[type] || 'bg-slate-500'} shadow-sm`}>
                 {type}
               </span>
             ))}
           </div>
 
-          <div className="pt-2 flex justify-between items-center border-t border-white/20 mt-1">
+          <div className="pt-1.5 flex justify-between items-center border-t border-white/20 mt-1">
             <div className="flex items-center gap-1">
-              <Coins size={14} className="text-yellow-400" />
-              <span className="text-sm font-bold">{pokemon.resaleValue}</span>
+              <Coins size={12} className="text-yellow-400" />
+              <span className="text-xs font-bold">{pokemon.resaleValue}</span>
             </div>
             
             {onSell && (
               <button 
                 onClick={(e) => { e.stopPropagation(); onSell(pokemon.instanceId); }}
-                className="flex items-center gap-1.5 text-xs font-bold bg-green-600 text-white hover:bg-green-500 px-3 py-1.5 rounded-lg transition-all shadow-md hover:shadow-lg active:scale-95 group/btn"
+                className="flex items-center gap-1 text-[10px] font-bold bg-green-600 text-white hover:bg-green-500 px-2 py-1 rounded-lg transition-all shadow-md group/btn"
               >
-                <Coins size={12} />
+                <Coins size={10} />
                 <span>VENDRE</span>
               </button>
             )}

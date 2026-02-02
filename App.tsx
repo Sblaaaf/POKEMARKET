@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import PackOpener from './components/PackOpener';
 import Collection from './components/Collection';
 import Dashboard from './components/Dashboard';
+import Deck from './components/Deck';
 import PokemonCard from './components/PokemonCard';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import ToastContainer from './components/Toast';
@@ -25,23 +26,36 @@ const App: React.FC = () => {
     handlePurchase,
     handleSell,
     handleToggleFavorite,
+    handleToggleDeck,
     handleEvolve,
-    handleFreeTokens
+    handleFreeTokens,
+    toggleTheme
   } = useGameState();
 
+  // Apply theme to body
+  useEffect(() => {
+    const body = document.body;
+    if (state.theme === 'light') {
+      body.style.backgroundColor = '#f8fafc';
+      body.style.color = '#0f172a';
+      body.classList.add('light-theme');
+      body.classList.remove('dark-theme');
+    } else {
+      body.style.backgroundColor = '#0f172a';
+      body.style.color = '#f8fafc';
+      body.classList.add('dark-theme');
+      body.classList.remove('light-theme');
+    }
+  }, [state.theme]);
+
   const navigateTo = (tab: string) => {
-      if (activeTab === 'shop' && tab !== 'shop') {
-          setPackResult(null);
-      }
+      if (activeTab === 'shop' && tab !== 'shop') setPackResult(null);
       setActiveTab(tab);
   };
 
   const handleQuickPackClick = () => {
-      if (activeTab === 'shop' && packResult && packResult.length > 0) {
-          setPackResult(null);
-      } else {
-          navigateTo('shop');
-      }
+      if (activeTab === 'shop' && packResult && packResult.length > 0) setPackResult(null);
+      else navigateTo('shop');
   };
 
   const initiateSell = (instanceId: string) => {
@@ -54,10 +68,6 @@ const App: React.FC = () => {
     handleSell(pokemonForSale);
     setPokemonForSale(null);
   };
-  
-  const cancelSell = () => {
-    setPokemonForSale(null);
-  };
 
   const triggerEvolve = async (instanceId: string) => {
     setIsEvolving(true);
@@ -67,12 +77,10 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'shop':
-        return <PackOpener tokens={state.tokens} onPurchase={handlePurchase} result={packResult} setResult={setPackResult} />;
-      case 'collection':
-        return <Collection collection={state.collection} onSell={initiateSell} onToggleFavorite={handleToggleFavorite} onEvolve={triggerEvolve} />;
-      case 'analytics':
-        return <Dashboard state={state} onFreeTokens={handleFreeTokens} />;
+      case 'shop': return <PackOpener tokens={state.tokens} onPurchase={handlePurchase} result={packResult} setResult={setPackResult} />;
+      case 'collection': return <Collection collection={state.collection} deck={state.deck} onSell={initiateSell} onToggleFavorite={handleToggleFavorite} onToggleDeck={handleToggleDeck} onEvolve={triggerEvolve} />;
+      case 'deck': return <Deck collection={state.collection} deck={state.deck} onToggleDeck={handleToggleDeck} onEvolve={triggerEvolve} onSell={initiateSell} />;
+      case 'analytics': return <Dashboard state={state} onFreeTokens={handleFreeTokens} />;
       case 'dashboard':
       default:
         return (
@@ -90,24 +98,8 @@ const App: React.FC = () => {
                 </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-               <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10">
-                  <h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-red-600 rounded-full" />Analytiques du Marché</h3>
-                  <Dashboard state={state} onFreeTokens={handleFreeTokens} />
-               </div>
-               <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10 flex flex-col">
-                  <h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-blue-600 rounded-full" />Dernière Pièce Rare</h3>
-                  <div className="flex-1 flex items-center justify-center py-6">
-                    {state.collection.length > 0 ? (
-                      <div className="relative group"><div className="absolute -inset-10 bg-red-600/10 blur-[80px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" /><PokemonCard pokemon={state.collection[0]} interactive={true} /></div>
-                    ) : (
-                      <div className="text-center py-12">
-                         <div className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800 shadow-inner"><ShoppingBag className="text-slate-700" size={32} /></div>
-                         <p className="text-slate-500 font-bold text-lg">Ta vitrine attend sa première carte...</p>
-                         <button onClick={() => navigateTo('shop')} className="text-red-500 font-black mt-4 hover:underline">Acheter maintenant</button>
-                      </div>
-                    )}
-                  </div>
-               </div>
+               <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10"><h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-red-600 rounded-full" />Analytiques</h3><Dashboard state={state} onFreeTokens={handleFreeTokens} /></div>
+               <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10 flex flex-col"><h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-blue-600 rounded-full" />Vitrine</h3><div className="flex-1 flex items-center justify-center py-6">{state.collection.length > 0 ? (<div className="relative group"><PokemonCard pokemon={state.collection[0]} interactive={true} /></div>) : (<div className="text-center py-12"><div className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800"><ShoppingBag className="text-slate-700" size={32} /></div><p className="text-slate-500 font-bold text-lg">Ta vitrine attend sa première carte...</p></div>)}</div></div>
             </div>
           </div>
         );
@@ -115,38 +107,15 @@ const App: React.FC = () => {
   };
 
   return (
-    <div id="app-container" className="min-h-screen bg-slate-950 selection:bg-red-500/30">
-      <Sidebar activeTab={activeTab} navigateTo={navigateTo} tokens={state.tokens} />
-      
+    <div className={`min-h-screen ${state.theme === 'light' ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-50'} transition-colors duration-500`}>
+      <Sidebar activeTab={activeTab} navigateTo={navigateTo} tokens={state.tokens} theme={state.theme} toggleTheme={toggleTheme} />
       <div className="flex flex-col relative h-screen lg:ml-72">
         <TopBar tokens={state.tokens} activeTab={activeTab} navigateTo={navigateTo} onQuickPackClick={handleQuickPackClick} packCost={PACK_COST} />
-        
-        <main id="main-content" className="flex-1 p-4 lg:p-12 lg:mt-8 mt-20 lg:pt-14 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
-          <div className="max-w-7xl mx-auto pb-20">
-            {renderContent()}
-          </div>
-        </main>
+        <main className="flex-1 p-4 lg:p-12 lg:mt-8 mt-20 overflow-y-auto overflow-x-hidden"><div className="max-w-7xl mx-auto pb-20">{renderContent()}</div></main>
       </div>
-
       <ToastContainer toasts={toasts} />
-
-      {isEvolving && (
-        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-[200] flex flex-col items-center justify-center gap-6 animate-in fade-in duration-300">
-            <div className="relative w-48 h-48 flex items-center justify-center">
-                <div className="absolute inset-0 bg-blue-600/30 blur-[100px] rounded-full animate-pulse" />
-                <div className="relative w-32 h-32 bg-slate-900 rounded-full border-4 border-blue-500 flex items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(59,130,246,0.5)]">
-                    <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 animate-spin-slow" />
-                    <ShoppingBag className="text-blue-500 animate-bounce absolute" size={48} />
-                </div>
-            </div>
-            <div className="text-center space-y-2">
-                <h2 className="text-4xl font-black text-white italic tracking-tighter">ÉVOLUTION...</h2>
-                <p className="text-blue-400 font-bold uppercase tracking-[0.3em] text-[10px]">Transformation de la structure moléculaire</p>
-            </div>
-        </div>
-      )}
-
-      <ConfirmationDialog pokemon={pokemonForSale} onConfirm={confirmSell} onCancel={cancelSell} />
+      {isEvolving && (<div className="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-[200] flex flex-col items-center justify-center gap-6"><div className="relative w-32 h-32 bg-slate-900 rounded-full border-4 border-blue-500 flex items-center justify-center overflow-hidden animate-pulse"><ShoppingBag className="text-blue-500 animate-bounce" size={48} /></div><h2 className="text-4xl font-black text-white italic">ÉVOLUTION...</h2></div>)}
+      <ConfirmationDialog pokemon={pokemonForSale} onConfirm={confirmSell} onCancel={() => setPokemonForSale(null)} />
     </div>
   );
 };

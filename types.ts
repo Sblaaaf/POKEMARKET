@@ -25,6 +25,14 @@ export interface BalanceEntry {
   amount: number;
 }
 
+export interface Transaction {
+  id: string;
+  type: 'buy' | 'sell' | 'evolve';
+  pokemonName: string;
+  amount: number;
+  timestamp: number;
+}
+
 export interface Achievement {
   id: string;
   title: string;
@@ -37,12 +45,15 @@ export interface GameState {
   tokens: number;
   collection: Pokemon[];
   balanceHistory: BalanceEntry[];
+  transactionHistory: Transaction[];
+  deck: string[]; // instanceIds
   totalSpent: number;
   totalEarned: number;
   unlockedAchievements: string[];
+  theme: 'dark' | 'light';
 }
 
-export type ToastType = 'success' | 'info' | 'error';
+export type ToastType = 'success' | 'info' | 'error' | 'warning';
 
 export interface ToastMessage {
   id: string;

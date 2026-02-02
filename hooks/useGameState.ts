@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { GameState, Pokemon, BalanceEntry, Rarity, ToastMessage, ToastType } from '../types';
+import { GameState, Pokemon, BalanceEntry, Rarity, ToastMessage, ToastType, Transaction } from '../types';
 import { INITIAL_TOKENS, RARITY_CONFIG, ACHIEVEMENTS } from '../constants';
 import { fetchEvolutionData } from '../services/pokeApi';
 
@@ -13,9 +13,12 @@ export const useGameState = () => {
       tokens: INITIAL_TOKENS,
       collection: [],
       balanceHistory: [{ timestamp: Date.now(), amount: INITIAL_TOKENS }],
+      transactionHistory: [],
+      deck: [],
       totalSpent: 0,
       totalEarned: 0,
-      unlockedAchievements: []
+      unlockedAchievements: [],
+      theme: 'dark'
     };
   });
 
@@ -29,9 +32,44 @@ export const useGameState = () => {
     }, 4000);
   }, []);
 
+  const addTransaction = useCallback((type: Transaction['type'], pokemonName: string, amount: number) => {
+    const newTransaction: Transaction = {
+      id: crypto.randomUUID(),
+      type,
+      pokemonName,
+      amount,
+      timestamp: Date.now()
+    };
+    setState(prev => ({
+      ...prev,
+      transactionHistory: [newTransaction, ...prev.transactionHistory].slice(0, 50)
+    }));
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('pokemarket_state', JSON.stringify(state));
   }, [state]);
+
+  // Dynamic Market Logic: Prices fluctuate every 60 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setState(prev => {
+        if (prev.collection.length === 0) return prev;
+        
+        const newCollection = prev.collection.map(p => {
+          // Random fluctuation between -10% and +10%
+          const change = 0.9 + Math.random() * 0.2;
+          const newValue = Math.max(1, Math.round(p.resaleValue * change));
+          return { ...p, resaleValue: newValue };
+        });
+
+        return { ...prev, collection: newCollection };
+      });
+      addToast("Le marché a fluctué ! Vérifiez vos prix.", "warning");
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [addToast]);
 
   // Check achievements
   useEffect(() => {
@@ -81,6 +119,7 @@ export const useGameState = () => {
         totalSpent: prev.totalSpent + cost
       };
     });
+    addTransaction('buy', `${pokemons.length} Pokémon`, cost);
     addToast(`${pokemons.length} booster(s) ouvert(s) !`, 'success');
   };
 
@@ -91,10 +130,12 @@ export const useGameState = () => {
         ...prev,
         tokens: newTokens,
         collection: prev.collection.filter(p => p.instanceId !== pokemon.instanceId),
+        deck: prev.deck.filter(id => id !== pokemon.instanceId), // Remove from deck if sold
         balanceHistory: updateBalanceHistory(newTokens, prev.balanceHistory),
         totalEarned: prev.totalEarned + pokemon.resaleValue
       };
     });
+    addTransaction('sell', pokemon.name, pokemon.resaleValue);
     addToast(`Vendu ${pokemon.name} pour ${pokemon.resaleValue} tokens.`, 'info');
   };
 
@@ -105,6 +146,23 @@ export const useGameState = () => {
         p.instanceId === instanceId ? { ...p, isFavorite: !p.isFavorite } : p
       )
     }));
+  };
+
+  const handleToggleDeck = (instanceId: string) => {
+    setState(prev => {
+      const isInDeck = prev.deck.includes(instanceId);
+      if (!isInDeck && prev.deck.length >= 6) {
+        addToast("Équipe complète (max 6) !", "error");
+        return prev;
+      }
+
+      const newDeck = isInDeck 
+        ? prev.deck.filter(id => id !== instanceId)
+        : [...prev.deck, instanceId];
+
+      addToast(isInDeck ? "Retiré de l'équipe" : "Ajouté à l'équipe", "info");
+      return { ...prev, deck: newDeck };
+    });
   };
 
   const handleEvolve = async (instanceId: string): Promise<boolean> => {
@@ -158,6 +216,7 @@ export const useGameState = () => {
       };
     });
 
+    addTransaction('evolve', evolvedPokemon.name, cost);
     addToast(`${pokemon.name} a évolué en ${evolvedPokemon.name} !`, 'success');
     return true;
   };
@@ -174,13 +233,22 @@ export const useGameState = () => {
     addToast("+10 Tokens cadeaux !", 'success');
   };
 
+  const toggleTheme = () => {
+    setState(prev => ({
+      ...prev,
+      theme: prev.theme === 'dark' ? 'light' : 'dark'
+    }));
+  };
+
   return {
     state,
     toasts,
     handlePurchase,
     handleSell,
     handleToggleFavorite,
+    handleToggleDeck,
     handleEvolve,
-    handleFreeTokens
+    handleFreeTokens,
+    toggleTheme
   };
 };
