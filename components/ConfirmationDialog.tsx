@@ -11,23 +11,26 @@ interface ConfirmationDialogProps {
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ pokemon, onConfirm, onCancel }) => {
+  // Fix: cast motion to any to avoid JSX property errors
+  const M = motion as any;
+
   return (
     <AnimatePresence>
       {pokemon && (
-        <motion.div
+        <M.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
           onClick={onCancel}
         >
-          <motion.div
+          <M.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: 'spring', damping: 15, stiffness: 200 }}
             className="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl max-w-sm w-full text-center p-8 space-y-6"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             <div className="mx-auto w-16 h-16 rounded-full bg-yellow-500/10 border-2 border-yellow-500/30 flex items-center justify-center">
               <AlertTriangle className="text-yellow-500" size={32} />
@@ -55,8 +58,8 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ pokemon, onConf
                 Confirmer
               </button>
             </div>
-          </motion.div>
-        </motion.div>
+          </M.div>
+        </M.div>
       )}
     </AnimatePresence>
   );

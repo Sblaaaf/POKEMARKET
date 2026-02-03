@@ -1,5 +1,5 @@
 
-import { Rarity } from './types';
+import { Rarity, DailyMission } from './types';
 
 export const INITIAL_TOKENS = 100;
 export const PACK_COST = 5;
@@ -12,6 +12,13 @@ export const ACHIEVEMENTS = [
   { id: 'shiny_hunter', title: 'Chasseur de Shiny', description: 'Trouver votre premier Pokémon Shiny.', icon: '✨' },
   { id: 'tycoon', title: 'Magnat du Marché', description: 'Gagner plus de 500 tokens au total.', icon: '💰' },
   { id: 'fire_master', title: 'Maître du Feu', description: 'Posséder 3 Pokémon de type Feu.', icon: '🔥' },
+  { id: 'battle_master', title: 'Champion d\'Arène', description: 'Gagner votre premier combat de Squad.', icon: '⚔️' },
+];
+
+export const DEFAULT_MISSIONS: DailyMission[] = [
+  { id: 'mission_buy', description: 'Ouvrir 5 boosters', reward: 15, isCompleted: false, type: 'buy', goal: 5, progress: 0 },
+  { id: 'mission_sell', description: 'Vendre 3 Pokémon', reward: 10, isCompleted: false, type: 'sell', goal: 3, progress: 0 },
+  { id: 'mission_battle', description: 'Gagner 2 combats', reward: 25, isCompleted: false, type: 'battle', goal: 2, progress: 0 },
 ];
 
 export const RARITY_CONFIG = {
@@ -21,7 +28,8 @@ export const RARITY_CONFIG = {
     borderColor: 'border-slate-500',
     textColor: 'text-slate-200',
     possibleValues: [1],
-    label: 'Commun'
+    label: 'Commun',
+    powerMultiplier: 1
   },
   [Rarity.RARE]: {
     chance: 0.25,
@@ -29,7 +37,8 @@ export const RARITY_CONFIG = {
     borderColor: 'border-blue-400',
     textColor: 'text-blue-100',
     possibleValues: [5, 10],
-    label: 'Rare'
+    label: 'Rare',
+    powerMultiplier: 1.5
   },
   [Rarity.EPIC]: {
     chance: 0.09,
@@ -37,7 +46,8 @@ export const RARITY_CONFIG = {
     borderColor: 'border-purple-400',
     textColor: 'text-purple-100',
     possibleValues: [15, 20, 25, 30],
-    label: 'Épique'
+    label: 'Épique',
+    powerMultiplier: 2.5
   },
   [Rarity.LEGENDARY]: {
     chance: 0.04,
@@ -45,7 +55,8 @@ export const RARITY_CONFIG = {
     borderColor: 'border-amber-300',
     textColor: 'text-amber-100',
     possibleValues: [35, 40, 45],
-    label: 'Légendaire'
+    label: 'Légendaire',
+    powerMultiplier: 5
   },
   [Rarity.COLLECTOR]: {
     chance: 0.02,
@@ -53,7 +64,8 @@ export const RARITY_CONFIG = {
     borderColor: 'border-fuchsia-300',
     textColor: 'text-fuchsia-100',
     possibleValues: [50],
-    label: 'Collector'
+    label: 'Collector',
+    powerMultiplier: 10
   }
 };
 

@@ -24,6 +24,8 @@ const Collection: React.FC<CollectionProps> = ({ collection, deck, onSell, onTog
   const [sortBy, setSortBy] = useState<'newest' | 'value' | 'rarity'>('newest');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  // Fix: cast motion to any to avoid JSX property errors
+  const M = motion as any;
 
   const allTypes = Array.from(new Set(collection.flatMap(p => p.types))).sort();
 
@@ -128,7 +130,7 @@ const Collection: React.FC<CollectionProps> = ({ collection, deck, onSell, onTog
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 justify-items-center pb-20 mt-4">
           {filteredCollection.map(pokemon => (
-            <motion.div key={pokemon.instanceId} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+            <M.div key={pokemon.instanceId} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
               <PokemonCard 
                 pokemon={pokemon} 
                 onSell={onSell} 
@@ -137,14 +139,14 @@ const Collection: React.FC<CollectionProps> = ({ collection, deck, onSell, onTog
                 onEvolve={onEvolve}
                 isInDeck={deck.includes(pokemon.instanceId)}
               />
-            </motion.div>
+            </M.div>
           ))}
         </div>
       ) : currentItem ? (
         <div className="relative flex flex-col items-center justify-center min-h-[60vh] py-8 gap-8">
             <div className="relative w-full max-w-[320px] h-[480px]">
               <AnimatePresence mode="wait">
-                <motion.div key={currentItem.instanceId} initial={{ opacity: 0, x: 100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -100 }} className="absolute inset-0 flex items-center justify-center">
+                <M.div key={currentItem.instanceId} initial={{ opacity: 0, x: 100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -100 }} className="absolute inset-0 flex items-center justify-center">
                   <PokemonCard 
                     pokemon={currentItem} 
                     onSell={onSell} 
@@ -153,7 +155,7 @@ const Collection: React.FC<CollectionProps> = ({ collection, deck, onSell, onTog
                     onEvolve={onEvolve}
                     isInDeck={deck.includes(currentItem.instanceId)}
                   />
-                </motion.div>
+                </M.div>
               </AnimatePresence>
             </div>
             <div className="flex items-center gap-6">

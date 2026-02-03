@@ -19,6 +19,8 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
   const [stdQty, setStdQty] = useState(1);
   const [guarQty, setGuarQty] = useState(1);
   const [collQty, setCollQty] = useState(1);
+  // Fix: cast motion to any to avoid JSX property errors
+  const M = motion as any;
 
   const determineRarity = (): Rarity => {
     const rand = Math.random();
@@ -105,7 +107,7 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
     <div id="pack-opener-container" className="w-full flex flex-col items-center justify-center min-h-[60vh]">
       <div className="max-w-4xl w-full text-center space-y-8">
         {!result && !isOpening && (
-          <motion.div 
+          <M.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch"
@@ -186,33 +188,33 @@ const PackOpener: React.FC<PackOpenerProps> = ({ tokens, onPurchase, result, set
             </div>
 
             {tokens < PACK_COST && <p className="text-red-400 text-[10px] font-black uppercase tracking-widest lg:col-span-3">Solde insuffisant pour un booster</p>}
-          </motion.div>
+          </M.div>
         )}
 
         {isOpening && (
           <div className="flex flex-col items-center gap-6 py-12">
-            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }} className="w-24 h-24 border-8 border-red-600 border-t-slate-800 rounded-full" />
+            <M.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }} className="w-24 h-24 border-8 border-red-600 border-t-slate-800 rounded-full" />
             <div className="space-y-2"><h3 className="text-2xl font-black text-white italic animate-pulse uppercase tracking-tighter">Ouverture des Packs...</h3><p className="text-slate-400 font-bold text-sm uppercase tracking-widest opacity-60">Le destin est en marche</p></div>
           </div>
         )}
 
         <AnimatePresence>
           {result && !isOpening && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-8">
+            <M.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-8">
               <div className="flex flex-wrap justify-center gap-6">
                 {result.map((pokemon, index) => (
-                  <motion.div
+                  <M.div
                     key={pokemon.instanceId}
                     initial={{ scale: 0.5, opacity: 0, y: 50 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     transition={{ type: "spring", damping: 15, stiffness: 120, delay: index * 0.05 }}
                   >
                     <PokemonCard pokemon={pokemon} interactive={false} />
-                  </motion.div>
+                  </M.div>
                 ))}
               </div>
               <button onClick={() => setResult(null)} className="bg-slate-800 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-700 transition-all border border-slate-700">Retour au Market</button>
-            </motion.div>
+            </M.div>
           )}
         </AnimatePresence>
       </div>

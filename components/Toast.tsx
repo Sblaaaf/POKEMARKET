@@ -9,11 +9,14 @@ interface ToastContainerProps {
 }
 
 const ToastContainer: React.FC<ToastContainerProps> = ({ toasts }) => {
+  // Fix: cast motion to any to avoid JSX property errors
+  const M = motion as any;
+
   return (
     <div className="fixed top-24 right-6 z-[100] flex flex-col gap-3 pointer-events-none w-full max-w-xs">
       <AnimatePresence>
         {toasts.map((toast) => (
-          <motion.div
+          <M.div
             key={toast.id}
             initial={{ opacity: 0, x: 50, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -30,7 +33,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts }) => {
               {toast.type === 'info' && <Info size={20} />}
             </div>
             <p className="text-sm font-bold flex-1 leading-tight">{toast.message}</p>
-          </motion.div>
+          </M.div>
         ))}
       </AnimatePresence>
     </div>

@@ -13,12 +13,14 @@ interface TopBarProps {
 
 const TopBar: React.FC<TopBarProps> = ({ tokens, activeTab, navigateTo, onQuickPackClick, packCost }) => {
   const isDashboard = activeTab === 'dashboard';
+  // Fix: cast motion to any to avoid JSX property errors
+  const M = motion as any;
 
   return (
     <header id="top-bar" className="fixed top-0 right-0 left-0 lg:left-72 h-20 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50 z-40 pl-20 pr-6 lg:px-10 flex items-center justify-between shadow-lg">
       <div className="flex items-center gap-4">
         {!isDashboard && (
-          <motion.button
+          <M.button
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             onClick={() => navigateTo('dashboard')}
@@ -26,7 +28,7 @@ const TopBar: React.FC<TopBarProps> = ({ tokens, activeTab, navigateTo, onQuickP
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
             <span className="hidden sm:inline font-bold text-sm">Retour</span>
-          </motion.button>
+          </M.button>
         )}
         <div className="flex flex-col">
           <h2 className="text-white font-black text-sm lg:text-base uppercase tracking-wider hidden sm:block">
@@ -50,7 +52,7 @@ const TopBar: React.FC<TopBarProps> = ({ tokens, activeTab, navigateTo, onQuickP
         </div>
 
         {/* Quick Pack Shortcut */}
-        <motion.button
+        <M.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onQuickPackClick}
@@ -70,7 +72,7 @@ const TopBar: React.FC<TopBarProps> = ({ tokens, activeTab, navigateTo, onQuickP
               <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
             </span>
           )}
-        </motion.button>
+        </M.button>
       </div>
     </header>
   );

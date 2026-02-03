@@ -66,7 +66,8 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSell, onToggleFavo
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, perspective: 1000 }}
+      // Fix: cast style to any to avoid rotateX/rotateY type errors
+      style={{ rotateX, rotateY, perspective: 1000 } as any}
       className="relative w-full max-w-[280px] aspect-[2/3] group cursor-pointer"
     >
       <div className={`relative w-full h-full rounded-xl overflow-hidden border-4 ${rarityInfo.borderColor} ${rarityInfo.color} shadow-2xl transition-all duration-300 flex flex-col p-3 gap-2`}>

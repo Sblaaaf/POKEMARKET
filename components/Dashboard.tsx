@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Coins, Library, Star, Gift, Award, CheckCircle2, History, ShoppingCart, Banknote } from 'lucide-react';
+import { TrendingUp, Coins, Library, Star, Gift, Award, CheckCircle2, History, ShoppingCart, Banknote, Target, Trophy } from 'lucide-react';
 import { GameState, Rarity } from '../types';
 import { ACHIEVEMENTS } from '../constants';
 
@@ -23,7 +23,7 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
   const shinyCount = state.collection.filter(p => p.isShiny).length;
   const buySellRatio = state.totalSpent > 0 ? (state.totalEarned / state.totalSpent).toFixed(2) : '0.00';
 
-  const balanceData = state.balanceHistory.map(entry => ({
+  const balanceData = (state.balanceHistory || []).map(entry => ({
     time: new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     tokens: entry.amount
   }));
@@ -54,6 +54,27 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
+          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
+             <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><Target size={24} className="text-red-500" />Missions Quotidiennes</h3>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {state.dailyMissions.map((mission) => (
+                   <div key={mission.id} className={`p-5 rounded-2xl border transition-all flex flex-col gap-4 ${mission.isCompleted ? 'bg-green-500/5 border-green-500/30' : 'bg-slate-950 border-slate-800'}`}>
+                      <div className="flex justify-between items-start">
+                         <div>
+                            <h4 className="font-bold text-white text-sm">{mission.description}</h4>
+                            <p className="text-[10px] text-slate-500 uppercase font-black mt-1">Récompense: {mission.reward} $</p>
+                         </div>
+                         {mission.isCompleted && <CheckCircle2 size={16} className="text-green-500" />}
+                      </div>
+                      <div className="space-y-1.5">
+                         <div className="flex justify-between text-[10px] font-black"><span className="text-slate-500">PROGRESSION</span><span className="text-white">{mission.progress} / {mission.goal}</span></div>
+                         <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden"><div className={`h-full transition-all duration-500 ${mission.isCompleted ? 'bg-green-500' : 'bg-red-500'}`} style={{ width: `${Math.min(100, (mission.progress / mission.goal) * 100)}%` }} /></div>
+                      </div>
+                   </div>
+                ))}
+             </div>
+          </div>
+
           <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><TrendingUp size={20} className="text-red-500" />Évolution du Solde</h3>
             <div className="h-[300px] w-full">
@@ -68,28 +89,6 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </div>
-
-          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
-             <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><History size={24} className="text-blue-500" />Activités Récentes</h3>
-             <div className="space-y-3">
-                {state.transactionHistory.length > 0 ? state.transactionHistory.slice(0, 10).map((t) => (
-                   <div key={t.id} className="flex items-center justify-between p-4 bg-slate-950/50 border border-slate-800 rounded-2xl hover:bg-slate-800/50 transition-all">
-                      <div className="flex items-center gap-4">
-                         <div className={`p-2 rounded-lg ${t.type === 'buy' ? 'bg-red-500/20 text-red-400' : t.type === 'sell' ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'}`}>
-                            {t.type === 'buy' ? <ShoppingCart size={18} /> : t.type === 'sell' ? <Banknote size={18} /> : <TrendingUp size={18} />}
-                         </div>
-                         <div>
-                            <p className="text-sm font-bold text-white capitalize">{t.type === 'buy' ? 'Achat' : t.type === 'sell' ? 'Vente' : 'Évolution'} : {t.pokemonName}</p>
-                            <p className="text-[10px] text-slate-500">{new Date(t.timestamp).toLocaleString()}</p>
-                         </div>
-                      </div>
-                      <div className={`text-sm font-black ${t.type === 'buy' ? 'text-red-400' : 'text-green-400'}`}>
-                         {t.type === 'buy' ? '-' : '+'}{t.amount} $
-                      </div>
-                   </div>
-                )) : <p className="text-center py-10 text-slate-500 italic">Aucune transaction enregistrée</p>}
-             </div>
           </div>
         </div>
 
@@ -114,13 +113,16 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
                 })}
              </div>
           </div>
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col">
-            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><Star size={20} className="text-purple-500" />Rareté Collection</h3>
-            <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart><Pie data={rarityData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">{rarityData.map((entry, index) => (<Cell key={`cell-${index}`} fill={RARITY_COLORS[entry.name as Rarity]} />))}</Pie><Tooltip /></PieChart>
-              </ResponsiveContainer>
-            </div>
+          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
+             <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><History size={24} className="text-blue-500" />Transactions</h3>
+             <div className="space-y-3">
+                {state.transactionHistory.slice(0, 5).map((t) => (
+                   <div key={t.id} className="flex justify-between items-center text-[10px]">
+                      <span className="text-slate-400 capitalize">{t.type}</span>
+                      <span className={`font-bold ${t.type.includes('win') || t.type.includes('sell') ? 'text-green-400' : 'text-red-400'}`}>{t.amount} $</span>
+                   </div>
+                ))}
+             </div>
           </div>
         </div>
       </div>

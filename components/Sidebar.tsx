@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { LayoutDashboard, Library, ShoppingBag, TrendingUp, Menu, X, Github, Shield, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, Library, ShoppingBag, TrendingUp, Menu, X, Github, Shield, Moon, Sun, Swords } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SidebarProps {
@@ -13,10 +13,13 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, navigateTo, tokens, theme, toggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
+  // Fix: cast motion to any to avoid JSX property errors
+  const M = motion as any;
 
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Tableau de bord' },
     { id: 'deck', icon: Shield, label: 'Mon Équipe' },
+    { id: 'battle', icon: Swords, label: 'Arène Combat' },
     { id: 'shop', icon: ShoppingBag, label: 'Market' },
     { id: 'collection', icon: Library, label: 'Collection' },
     { id: 'analytics', icon: TrendingUp, label: 'Statistiques' },
@@ -41,9 +44,25 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, navigateTo, tokens, theme,
 
       <AnimatePresence>
         {isOpen && (
-          <><motion.aside initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} className="fixed top-0 left-0 bottom-0 w-72 bg-slate-950 border-r border-slate-800/50 z-[80] flex flex-col shadow-2xl lg:hidden">
-              <SidebarContent activeTab={activeTab} handleNavClick={handleNavClick} menuItems={menuItems} theme={theme} toggleTheme={toggleTheme} />
-            </motion.aside><motion.div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[75] lg:hidden" onClick={() => setIsOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} /></>
+          <M.aside 
+            key="mobile-sidebar"
+            initial={{ x: -300 }} 
+            animate={{ x: 0 }} 
+            exit={{ x: -300 }} 
+            className="fixed top-0 left-0 bottom-0 w-72 bg-slate-950 border-r border-slate-800/50 z-80 flex flex-col shadow-2xl lg:hidden"
+          >
+            <SidebarContent activeTab={activeTab} handleNavClick={handleNavClick} menuItems={menuItems} theme={theme} toggleTheme={toggleTheme} />
+          </M.aside>
+        )}
+        {isOpen && (
+          <M.div 
+            key="mobile-overlay"
+            className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[75] lg:hidden" 
+            onClick={() => setIsOpen(false)} 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+          />
         )}
       </AnimatePresence>
     </>
@@ -82,7 +101,7 @@ const SidebarContent = ({ activeTab, handleNavClick, menuItems, theme, toggleThe
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-green-500" /><span className="text-[10px] font-bold text-slate-400">MARCHÉ OUVERT</span></div>
-          <a href="#" className="flex items-center gap-2 text-slate-600 hover:text-white text-[9px] font-bold transition-colors group"><Github size={12} /><span>VERSION 1.6.0 - STABLE</span></a>
+          <a href="#" className="flex items-center gap-2 text-slate-600 hover:text-white text-[9px] font-bold transition-colors group"><Github size={12} /><span>VERSION 1.7.0 - STABLE</span></a>
         </div>
     </div>
   </>

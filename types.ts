@@ -27,18 +27,20 @@ export interface BalanceEntry {
 
 export interface Transaction {
   id: string;
-  type: 'buy' | 'sell' | 'evolve';
+  type: 'buy' | 'sell' | 'evolve' | 'battle_win' | 'mission_reward';
   pokemonName: string;
   amount: number;
   timestamp: number;
 }
 
-export interface Achievement {
+export interface DailyMission {
   id: string;
-  title: string;
   description: string;
-  icon: string;
-  unlocked: boolean;
+  reward: number;
+  isCompleted: boolean;
+  type: 'buy' | 'sell' | 'evolve' | 'battle';
+  goal: number;
+  progress: number;
 }
 
 export interface GameState {
@@ -47,10 +49,12 @@ export interface GameState {
   balanceHistory: BalanceEntry[];
   transactionHistory: Transaction[];
   deck: string[]; // instanceIds
+  dailyMissions: DailyMission[];
   totalSpent: number;
   totalEarned: number;
   unlockedAchievements: string[];
   theme: 'dark' | 'light';
+  lastMissionReset?: number;
 }
 
 export type ToastType = 'success' | 'info' | 'error' | 'warning';

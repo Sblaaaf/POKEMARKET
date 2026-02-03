@@ -15,6 +15,8 @@ interface DeckProps {
 
 const Deck: React.FC<DeckProps> = ({ collection, deck, onToggleDeck, onEvolve, onSell }) => {
   const squad = deck.map(id => collection.find(p => p.instanceId === id)).filter(Boolean) as Pokemon[];
+  // Fix: cast motion to any to avoid JSX property errors
+  const M = motion as any;
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -39,7 +41,7 @@ const Deck: React.FC<DeckProps> = ({ collection, deck, onToggleDeck, onEvolve, o
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center">
           <AnimatePresence>
             {squad.map((pokemon, index) => (
-              <motion.div
+              <M.div
                 key={pokemon.instanceId}
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -58,7 +60,7 @@ const Deck: React.FC<DeckProps> = ({ collection, deck, onToggleDeck, onEvolve, o
                 <div className="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full border-4 border-slate-950 flex items-center justify-center font-black text-slate-950 shadow-xl z-50">
                   {index + 1}
                 </div>
-              </motion.div>
+              </M.div>
             ))}
           </AnimatePresence>
           {squad.length < 6 && (
