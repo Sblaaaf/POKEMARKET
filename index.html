@@ -1,35 +1,48 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Poké-Market Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              heading: ['Outfit', 'sans-serif'],
+            },
+          },
+        },
+      }
+    </script>
     <style>
       body {
-        font-family: 'Inter', sans-serif;
-        background-color: #0f172a;
-        color: #f8fafc;
         margin: 0;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
-      h1, h2, h3, .font-heading {
-        font-family: 'Outfit', sans-serif;
-      }
+      
       /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
       }
-      ::-webkit-scrollbar-track {
+      .dark ::-webkit-scrollbar-track {
         background: #1e293b;
       }
-      ::-webkit-scrollbar-thumb {
+      .light ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      .dark ::-webkit-scrollbar-thumb {
         background: #475569;
         border-radius: 4px;
       }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #64748b;
+      .light ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
       }
     </style>
   <script type="importmap">
@@ -45,7 +58,7 @@
 }
 </script>
 </head>
-  <body>
+  <body class="bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-50">
     <div id="root"></div>
   </body>
 </html>

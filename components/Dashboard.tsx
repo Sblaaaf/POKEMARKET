@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
-import { TrendingUp, Coins, Library, Star, Gift, Award, CheckCircle2, History, ShoppingCart, Banknote, Target, Trophy, PieChart as PieIcon } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import { TrendingUp, Coins, Library, Star, Gift, Award, CheckCircle2, History, Target, PieChart as PieIcon } from 'lucide-react';
 import { GameState, Rarity } from '../types';
 import { ACHIEVEMENTS } from '../constants';
 
@@ -42,20 +42,22 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
   });
   const typeData = Object.entries(typesMap).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value);
 
+  const isDark = state.theme === 'dark';
+
   return (
     <div id="dashboard-container" className="relative space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {[
-          { label: 'Valeur Collection', value: collectionValue, icon: Coins, color: 'text-yellow-400' },
-          { label: 'Total Pokémon', value: state.collection.length, icon: Library, color: 'text-blue-400' },
-          { label: 'Cartes Shiny', value: shinyCount, icon: Star, color: 'text-purple-400' },
-          { label: 'Ratio Profit', value: `${buySellRatio}x`, icon: TrendingUp, color: 'text-green-400' },
+          { label: 'Valeur Collection', value: collectionValue, icon: Coins, color: 'text-yellow-500' },
+          { label: 'Total Pokémon', value: state.collection.length, icon: Library, color: 'text-blue-500' },
+          { label: 'Cartes Shiny', value: shinyCount, icon: Star, color: 'text-purple-500' },
+          { label: 'Ratio Profit', value: `${buySellRatio}x`, icon: TrendingUp, color: 'text-green-500' },
         ].map((stat, i) => (
-          <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex items-center gap-4 shadow-sm">
-            <div className={`p-4 rounded-xl bg-slate-800/50 ${stat.color}`}><stat.icon size={24} /></div>
+          <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl flex items-center gap-4 shadow-sm">
+            <div className={`p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 ${stat.color}`}><stat.icon size={24} /></div>
             <div>
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{stat.label}</p>
-              <p className="text-2xl font-black text-white">{stat.value}</p>
+              <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.15em]">{stat.label}</p>
+              <p className="text-xl font-black text-slate-900 dark:text-white">{stat.value}</p>
             </div>
           </div>
         ))}
@@ -63,36 +65,36 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
-             <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><Target size={24} className="text-red-500" />Missions Quotidiennes</h3>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 lg:p-8 rounded-[2rem] shadow-sm">
+             <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3"><Target size={24} className="text-red-500" />Missions Quotidiennes</h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {state.dailyMissions.map((mission) => (
-                   <div key={mission.id} className={`p-5 rounded-2xl border transition-all flex flex-col gap-4 ${mission.isCompleted ? 'bg-green-500/5 border-green-500/30' : 'bg-slate-950 border-slate-800'}`}>
+                   <div key={mission.id} className={`p-5 rounded-2xl border transition-all flex flex-col gap-4 ${mission.isCompleted ? 'bg-green-50 border-green-200 dark:bg-green-500/5 dark:border-green-500/30' : 'bg-slate-50 dark:bg-slate-950 border-slate-100 dark:border-slate-800'}`}>
                       <div className="flex justify-between items-start">
                          <div>
-                            <h4 className="font-bold text-white text-sm">{mission.description}</h4>
-                            <p className="text-[10px] text-slate-500 uppercase font-black mt-1">Récompense: {mission.reward} $</p>
+                            <h4 className="font-bold text-slate-800 dark:text-white text-sm">{mission.description}</h4>
+                            <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-black mt-1 tracking-wider">Récompense: {mission.reward} $</p>
                          </div>
                          {mission.isCompleted && <CheckCircle2 size={16} className="text-green-500" />}
                       </div>
                       <div className="space-y-1.5">
-                         <div className="flex justify-between text-[10px] font-black"><span className="text-slate-500">PROGRESSION</span><span className="text-white">{mission.progress} / {mission.goal}</span></div>
-                         <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden"><div className={`h-full transition-all duration-500 ${mission.isCompleted ? 'bg-green-500' : 'bg-red-500'}`} style={{ width: `${Math.min(100, (mission.progress / mission.goal) * 100)}%` }} /></div>
+                         <div className="flex justify-between text-[10px] font-black tracking-widest"><span className="text-slate-400">PROGRESSION</span><span className="text-slate-700 dark:text-white">{mission.progress} / {mission.goal}</span></div>
+                         <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden"><div className={`h-full transition-all duration-500 ${mission.isCompleted ? 'bg-green-500' : 'bg-red-500'}`} style={{ width: `${Math.min(100, (mission.progress / mission.goal) * 100)}%` }} /></div>
                       </div>
                    </div>
                 ))}
              </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
-            <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><PieIcon size={24} className="text-blue-500" />Distribution par Type</h3>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 lg:p-8 rounded-[2rem] shadow-sm">
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3"><PieIcon size={24} className="text-blue-500" />Distribution par Type</h3>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={typeData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1e293b" : "#e2e8f0"} horizontal={false} />
                   <XAxis type="number" hide />
-                  <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={10} width={80} />
-                  <Tooltip cursor={{ fill: '#1e293b' }} contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b' }} />
+                  <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={10} width={80} axisLine={false} tickLine={false} />
+                  <Tooltip cursor={{ fill: isDark ? '#1e293b' : '#f8fafc' }} contentStyle={{ backgroundColor: isDark ? '#0f172a' : '#ffffff', border: `1px solid ${isDark ? '#1e293b' : '#e2e8f0'}`, borderRadius: '12px', color: isDark ? '#f8fafc' : '#0f172a' }} />
                   <Bar dataKey="value" fill="#ef4444" radius={[0, 4, 4, 0]} barSize={20} />
                 </BarChart>
               </ResponsiveContainer>
@@ -101,38 +103,55 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
         </div>
 
         <div className="space-y-8">
-           <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
-             <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><Award size={24} className="text-amber-500" />Succès</h3>
-             <div className="grid grid-cols-1 gap-4">
+           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 lg:p-8 rounded-[2rem] shadow-sm">
+             <h3 className="text-xl font-black text-slate-900 dark:text-white mb-8 flex items-center gap-3"><Award size={24} className="text-amber-500" />Succès</h3>
+             <div className="grid grid-cols-1 gap-3">
                 {ACHIEVEMENTS.map((ach) => {
                    const isUnlocked = state.unlockedAchievements.includes(ach.id);
                    return (
-                      <div key={ach.id} className={`p-4 rounded-2xl border transition-all flex items-start gap-4 ${isUnlocked ? 'bg-amber-500/5 border-amber-500/30' : 'bg-slate-950 border-slate-800 opacity-40 grayscale'}`}>
+                      <div key={ach.id} className={`p-4 rounded-2xl border transition-all flex items-start gap-4 ${isUnlocked ? 'bg-amber-50 border-amber-200 dark:bg-amber-500/5 dark:border-amber-500/30' : 'bg-slate-50 dark:bg-slate-950 border-slate-100 dark:border-slate-800 opacity-40 grayscale'}`}>
                          <div className="text-2xl shrink-0">{ach.icon}</div>
                          <div>
                             <div className="flex items-center gap-2">
-                               <h4 className="font-bold text-white text-xs">{ach.title}</h4>
+                               <h4 className="font-bold text-slate-800 dark:text-white text-xs">{ach.title}</h4>
                                {isUnlocked && <CheckCircle2 size={12} className="text-amber-500" />}
                             </div>
-                            <p className="text-[10px] text-slate-500 leading-tight mt-1">{ach.description}</p>
+                            <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight mt-1">{ach.description}</p>
                          </div>
                       </div>
                    )
                 })}
              </div>
           </div>
-          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
-            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><PieIcon size={20} className="text-purple-500" />Rareté Collection</h3>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 lg:p-8 rounded-[2rem] shadow-sm">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2"><PieIcon size={20} className="text-purple-500" />Rareté Collection</h3>
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart><Pie data={rarityData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">{rarityData.map((entry, index) => (<Cell key={`cell-${index}`} fill={RARITY_COLORS[entry.name as Rarity]} />))}</Pie><Tooltip /></PieChart>
+                <PieChart>
+                  <Pie data={rarityData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                    {rarityData.map((entry, index) => (<Cell key={`cell-${index}`} fill={RARITY_COLORS[entry.name as Rarity]} />))}
+                  </Pie>
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                </PieChart>
               </ResponsiveContainer>
             </div>
+          </div>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 lg:p-8 rounded-[2rem] shadow-sm">
+             <h3 className="text-lg font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3"><History size={20} className="text-blue-500" />Historique</h3>
+             <div className="space-y-3">
+                {state.transactionHistory.slice(0, 5).map((t) => (
+                   <div key={t.id} className="flex justify-between items-center text-[10px] py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
+                      <span className="text-slate-400 dark:text-slate-500 capitalize font-bold">{t.type}</span>
+                      <span className={`font-black ${t.type.includes('win') || t.type.includes('sell') ? 'text-green-500' : 'text-red-500'}`}>{t.amount} $</span>
+                   </div>
+                ))}
+                {state.transactionHistory.length === 0 && <p className="text-slate-400 italic text-[10px] text-center py-4">Aucune transaction</p>}
+             </div>
           </div>
         </div>
       </div>
       
-      <button onClick={onFreeTokens} className="fixed bottom-4 right-4 z-50 p-3 bg-yellow-500 text-yellow-900 rounded-full shadow-lg opacity-10 hover:opacity-100 transition-all duration-300 transform hover:scale-110" title="Obtenir 10 tokens gratuits !"><Gift size={24} /></button>
+      <button onClick={onFreeTokens} className="fixed bottom-6 right-6 z-50 p-4 bg-yellow-400 text-yellow-900 rounded-full shadow-2xl opacity-80 hover:opacity-100 hover:scale-110 active:scale-90 transition-all duration-300" title="Obtenir 10 tokens gratuits !"><Gift size={24} /></button>
     </div>
   );
 };

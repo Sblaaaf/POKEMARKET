@@ -38,17 +38,13 @@ const App: React.FC = () => {
   } = useGameState();
 
   useEffect(() => {
-    const body = document.body;
+    const html = document.documentElement;
     if (state.theme === 'light') {
-      body.style.backgroundColor = '#f8fafc';
-      body.style.color = '#0f172a';
-      body.classList.add('light-theme');
-      body.classList.remove('dark-theme');
+      html.classList.remove('dark');
+      html.classList.add('light');
     } else {
-      body.style.backgroundColor = '#0f172a';
-      body.style.color = '#f8fafc';
-      body.classList.add('dark-theme');
-      body.classList.remove('light-theme');
+      html.classList.remove('light');
+      html.classList.add('dark');
     }
   }, [state.theme]);
 
@@ -107,12 +103,12 @@ const App: React.FC = () => {
                 </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-               <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10"><h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-red-600 rounded-full" />Missions & Statistiques</h3><Dashboard state={state} onFreeTokens={handleFreeTokens} /></div>
-               <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10 flex flex-col"><h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-blue-600 rounded-full" />Vitrine</h3><div className="flex-1 flex items-center justify-center py-6">
+               <div className="bg-slate-100 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200 dark:border-slate-800/60 rounded-[2.5rem] p-6 lg:p-10 shadow-sm"><h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 lg:mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-red-600 rounded-full" />Missions & Statistiques</h3><Dashboard state={state} onFreeTokens={handleFreeTokens} /></div>
+               <div className="bg-slate-100 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200 dark:border-slate-800/60 rounded-[2.5rem] p-6 lg:p-10 flex flex-col shadow-sm"><h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 lg:mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-blue-600 rounded-full" />Vitrine</h3><div className="flex-1 flex items-center justify-center py-6">
                  {state.collection.length > 0 ? (
                    <div className="relative group"><PokemonCard pokemon={state.collection[0]} interactive={true} /></div>
                  ) : (
-                   <div className="text-center py-12"><div className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800"><ShoppingBag className="text-slate-700" size={32} /></div><p className="text-slate-500 font-bold text-lg">Ta vitrine attend sa première carte...</p></div>
+                   <div className="text-center py-12"><div className="w-24 h-24 bg-slate-200 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-300 dark:border-slate-800"><ShoppingBag className="text-slate-400 dark:text-slate-700" size={32} /></div><p className="text-slate-500 font-bold text-lg">Ta vitrine attend sa première carte...</p></div>
                  )}
                </div></div>
             </div>
@@ -122,7 +118,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen ${state.theme === 'light' ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-50'} transition-colors duration-500`}>
+    <div className={`min-h-screen transition-colors duration-500 bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-50`}>
       <Sidebar activeTab={activeTab} navigateTo={navigateTo} tokens={state.tokens} theme={state.theme} toggleTheme={toggleTheme} />
       <div className="flex flex-col relative h-screen lg:ml-72">
         <TopBar tokens={state.tokens} activeTab={activeTab} navigateTo={navigateTo} onQuickPackClick={handleQuickPackClick} packCost={PACK_COST} />

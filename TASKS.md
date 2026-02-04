@@ -19,16 +19,25 @@
 - [x] **Missions Quotidiennes :** Système de quêtes (Achat, Vente, Combat).
 
 ### V1.8 - Pokedex & Collectionnisme
-- [x] **Pokedex Global :** Vue complète des 1025 Pokémon avec suivi de découverte et silhouettes.
-- [x] **Hôtel des Ventes (Auctions) :** Système de vente simulé avec enchérisseurs AI pour maximiser les profits.
-- [x] **Distribution par Type :** Graphique à barres dans les statistiques montrant la répartition élémentaire.
-- [x] **Migration d'état :** Suivi persistant des IDs découverts.
+- [x] **Pokedex Global :** Vue complète des 1025 Pokémon avec suivi de découverte.
+- [x] **Hôtel des Ventes (Auctions) :** Système de vente simulé avec enchérisseurs AI.
+- [x] **Distribution par Type :** Graphique à barres dans les statistiques.
+
+### V1.8.1 - Correctifs URGENTS & UI Rafinée
+- [x] **Fix Layout UI :** Refonte de la mise en page du Dashboard pour une meilleure lisibilité (espacements, contrastes).
+- [x] **Fix Mobile Sidebar :** Correction de l'accessibilité de la sidebar sur mobile/tablette (z-index et overlay interactif).
+- [x] **Vrai Theme Toggle :** Implémentation complète du mode Light/Dark via Tailwind `dark:` classes sur tous les composants.
+- [x] **Fix Battle Logic :** Correction du calcul de dégâts pour assurer que la puissance totale est le facteur déterminant de la victoire.
+- [x] **Battle UX :** Affichage de l'équipe ennemie et journal de combat plus détaillé.
 
 ---
 
 ## 🚀 Roadmap & Axes d'Amélioration Suggérés
 
-- [ ] fix bug de mise en page et fais un vrai dark theme
+### URGENTS
+
+- [ ] sur desktop : met la vitrine sous les statistiques. car la grille actuelle ne rend pas bien. les stats sont compressées sur la largeur de l'écran.
+- [ ] ajoute un onglet "statistiques" 
 
 ### V1.9 - Social & Événements
 
