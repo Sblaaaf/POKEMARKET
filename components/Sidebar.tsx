@@ -21,6 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, navigateTo, tokens, theme,
     { id: 'deck', icon: Shield, label: 'Mon Équipe' },
     { id: 'battle', icon: Swords, label: 'Arène Combat' },
     { id: 'auctions', icon: Gavel, label: 'Enchères' },
+    { id: 'analytics', icon: TrendingUp, label: 'Statistiques' },
     { id: 'shop', icon: ShoppingBag, label: 'Market' },
     { id: 'collection', icon: Library, label: 'Collection' },
   ];

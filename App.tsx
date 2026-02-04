@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, TrendingUp } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import PackOpener from './components/PackOpener';
@@ -102,15 +102,47 @@ const App: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-               <div className="bg-slate-100 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200 dark:border-slate-800/60 rounded-[2.5rem] p-6 lg:p-10 shadow-sm"><h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 lg:mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-red-600 rounded-full" />Missions & Statistiques</h3><Dashboard state={state} onFreeTokens={handleFreeTokens} /></div>
-               <div className="bg-slate-100 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200 dark:border-slate-800/60 rounded-[2.5rem] p-6 lg:p-10 flex flex-col shadow-sm"><h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 lg:mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-blue-600 rounded-full" />Vitrine</h3><div className="flex-1 flex items-center justify-center py-6">
-                 {state.collection.length > 0 ? (
-                   <div className="relative group"><PokemonCard pokemon={state.collection[0]} interactive={true} /></div>
-                 ) : (
-                   <div className="text-center py-12"><div className="w-24 h-24 bg-slate-200 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-300 dark:border-slate-800"><ShoppingBag className="text-slate-400 dark:text-slate-700" size={32} /></div><p className="text-slate-500 font-bold text-lg">Ta vitrine attend sa première carte...</p></div>
-                 )}
-               </div></div>
+            
+            <div className="flex flex-col gap-10">
+               {/* Summary section (full width) */}
+               <div className="bg-slate-100 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200 dark:border-slate-800/60 rounded-[2.5rem] p-6 lg:p-10 shadow-sm">
+                 <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 lg:mb-10 flex items-center gap-3">
+                   <div className="w-2 h-10 bg-red-600 rounded-full" />
+                   Tableau de Bord
+                 </h3>
+                 <Dashboard state={state} onFreeTokens={handleFreeTokens} />
+               </div>
+
+               {/* Showcase section (now below, full width) */}
+               <div className="bg-slate-100 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200 dark:border-slate-800/60 rounded-[2.5rem] p-6 lg:p-10 flex flex-col shadow-sm">
+                 <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 lg:mb-10 flex items-center gap-3">
+                   <div className="w-2 h-10 bg-blue-600 rounded-full" />
+                   Vitrine
+                 </h3>
+                 <div className="flex-1 flex flex-col items-center justify-center py-6">
+                   {state.collection.length > 0 ? (
+                     <div className="flex flex-wrap justify-center gap-10">
+                       <div className="relative group">
+                         <PokemonCard pokemon={state.collection[0]} interactive={true} />
+                         <p className="text-center mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Dernière acquisition</p>
+                       </div>
+                       {state.collection.length > 1 && (
+                         <div className="hidden md:block relative group">
+                           <PokemonCard pokemon={state.collection[1]} interactive={true} />
+                           <p className="text-center mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Ancien favori</p>
+                         </div>
+                       )}
+                     </div>
+                   ) : (
+                     <div className="text-center py-12">
+                       <div className="w-24 h-24 bg-slate-200 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-300 dark:border-slate-800">
+                         <ShoppingBag className="text-slate-400 dark:text-slate-700" size={32} />
+                       </div>
+                       <p className="text-slate-500 font-bold text-lg">Ta vitrine attend sa première carte...</p>
+                     </div>
+                   )}
+                 </div>
+               </div>
             </div>
           </div>
         );

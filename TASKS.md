@@ -29,15 +29,12 @@
 - [x] **Vrai Theme Toggle :** Implémentation complète du mode Light/Dark via Tailwind `dark:` classes sur tous les composants.
 - [x] **Fix Battle Logic :** Correction du calcul de dégâts pour assurer que la puissance totale est le facteur déterminant de la victoire.
 - [x] **Battle UX :** Affichage de l'équipe ennemie et journal de combat plus détaillé.
+- [x] **Stacked Dashboard :** Réorganisation de la vitrine sous les statistiques pour éviter la compression sur desktop.
+- [x] **Tab Statistiques :** Ajout d'un onglet dédié aux statistiques pour une consultation rapide.
 
 ---
 
 ## 🚀 Roadmap & Axes d'Amélioration Suggérés
-
-### URGENTS
-
-- [ ] sur desktop : met la vitrine sous les statistiques. car la grille actuelle ne rend pas bien. les stats sont compressées sur la largeur de l'écran.
-- [ ] ajoute un onglet "statistiques" 
 
 ### V1.9 - Social & Événements
 
