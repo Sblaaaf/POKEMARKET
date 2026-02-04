@@ -8,6 +8,8 @@ import Collection from './components/Collection';
 import Dashboard from './components/Dashboard';
 import Deck from './components/Deck';
 import BattleSimulator from './components/BattleSimulator';
+import Pokedex from './components/Pokedex';
+import AuctionHouse from './components/AuctionHouse';
 import PokemonCard from './components/PokemonCard';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import ToastContainer from './components/Toast';
@@ -31,6 +33,7 @@ const App: React.FC = () => {
     handleEvolve,
     handleFreeTokens,
     handleBattleWin,
+    startAuction,
     toggleTheme
   } = useGameState();
 
@@ -84,6 +87,8 @@ const App: React.FC = () => {
       case 'collection': return <Collection collection={state.collection} deck={state.deck} onSell={initiateSell} onToggleFavorite={handleToggleFavorite} onToggleDeck={handleToggleDeck} onEvolve={triggerEvolve} />;
       case 'deck': return <Deck collection={state.collection} deck={state.deck} onToggleDeck={handleToggleDeck} onEvolve={triggerEvolve} onSell={initiateSell} />;
       case 'battle': return <BattleSimulator squad={squad} onWin={handleBattleWin} />;
+      case 'pokedex': return <Pokedex discovered={state.pokedex} />;
+      case 'auctions': return <AuctionHouse auctions={state.activeAuctions} collection={state.collection} onStartAuction={startAuction} />;
       case 'analytics': return <Dashboard state={state} onFreeTokens={handleFreeTokens} />;
       case 'dashboard':
       default:
@@ -97,13 +102,19 @@ const App: React.FC = () => {
                     <div className="flex flex-wrap items-center justify-center gap-4"><p className="text-red-500 bg-white px-5 py-2 rounded-2xl inline-block font-black shadow-2xl text-lg">VALEUR TOTALE: {state.collection.reduce((sum, p) => sum + p.resaleValue, 0)} $</p><p className="text-white/60 font-bold text-sm tracking-widest uppercase">{state.collection.length} CARTES POSSÉDÉES</p></div>
                     <div className="flex flex-wrap justify-center gap-4 pt-4">
                         <button onClick={() => navigateTo('shop')} className="bg-white text-red-600 px-12 py-5 rounded-[1.5rem] font-black shadow-xl hover:scale-105 transition-all active:scale-95 flex items-center gap-4 text-lg"><ShoppingBag size={24} />BOOSTER PACK</button>
-                        <button onClick={() => navigateTo('battle')} className="bg-slate-950/40 backdrop-blur-md text-white border border-white/20 px-12 py-5 rounded-[1.5rem] font-bold hover:bg-slate-950/60 transition-all flex items-center gap-4 text-lg">ARÈNE COMBAT</button>
+                        <button onClick={() => navigateTo('pokedex')} className="bg-slate-950/40 backdrop-blur-md text-white border border-white/20 px-12 py-5 rounded-[1.5rem] font-bold hover:bg-slate-950/60 transition-all flex items-center gap-4 text-lg">VOIR POKEDEX</button>
                     </div>
                 </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10"><h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-red-600 rounded-full" />Missions & Statistiques</h3><Dashboard state={state} onFreeTokens={handleFreeTokens} /></div>
-               <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10 flex flex-col"><h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-blue-600 rounded-full" />Vitrine</h3><div className="flex-1 flex items-center justify-center py-6">{state.collection.length > 0 ? (<div className="relative group"><PokemonCard pokemon={state.collection[0]} interactive={true} /></div>) : (<div className="text-center py-12"><div className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800"><ShoppingBag className="text-slate-700" size={32} /></div><p className="text-slate-500 font-bold text-lg">Ta vitrine attend sa première carte...</p></div>)}</div></div>
+               <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/60 rounded-[2.5rem] p-10 flex flex-col"><h3 className="text-2xl font-black text-white mb-10 flex items-center gap-3"><div className="w-2 h-10 bg-blue-600 rounded-full" />Vitrine</h3><div className="flex-1 flex items-center justify-center py-6">
+                 {state.collection.length > 0 ? (
+                   <div className="relative group"><PokemonCard pokemon={state.collection[0]} interactive={true} /></div>
+                 ) : (
+                   <div className="text-center py-12"><div className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800"><ShoppingBag className="text-slate-700" size={32} /></div><p className="text-slate-500 font-bold text-lg">Ta vitrine attend sa première carte...</p></div>
+                 )}
+               </div></div>
             </div>
           </div>
         );

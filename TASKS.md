@@ -15,19 +15,24 @@
 - [x] **Mode Sombre / Lumineux :** Toggle de thème complet.
 
 ### V1.7 - Engagement, Combat & Missions
-- [x] **Simulateur de Combat (Squad Clash) :** Engagez votre équipe contre des adversaires pour gagner des tokens.
-- [x] **Puissance de Combat :** Calcul intelligent basé sur la rareté et la valeur marchande.
-- [x] **Missions Quotidiennes :** Système de quêtes (Achat, Vente, Combat) avec récompenses automatiques.
-- [x] **Achievements Étendus :** Nouveau succès "Champion d'Arène".
-- [x] **Facilité UX :** Multi-achat étendu à 10 unités pour tous les types de packs.
+- [x] **Simulateur de Combat (Squad Clash) :** Engagez votre équipe contre des adversaires.
+- [x] **Missions Quotidiennes :** Système de quêtes (Achat, Vente, Combat).
+
+### V1.8 - Pokedex & Collectionnisme
+- [x] **Pokedex Global :** Vue complète des 1025 Pokémon avec suivi de découverte et silhouettes.
+- [x] **Hôtel des Ventes (Auctions) :** Système de vente simulé avec enchérisseurs AI pour maximiser les profits.
+- [x] **Distribution par Type :** Graphique à barres dans les statistiques montrant la répartition élémentaire.
+- [x] **Migration d'état :** Suivi persistant des IDs découverts.
 
 ---
 
 ## 🚀 Roadmap & Axes d'Amélioration Suggérés
 
-### V1.8 - Pokedex & Collectionnisme
+- [ ] fix bug de mise en page et fais un vrai dark theme
 
-- [ ] **Pokedex Global :** Une vue montrant tous les Pokémon découverts vs total disponible dans l'API (1025).
-- [ ] **Filtre par Type Graphique :** Dans les statistiques, afficher la répartition des types (Feu, Eau, etc.).
-- [ ] **Vente aux Enchères :** Possibilité de mettre en vente une carte à un prix élevé pendant un temps limité.
+### V1.9 - Social & Événements
+
+- [ ] **Événements Temporels :** "Heure de Type Eau" où les chances d'obtenir des Pokémon Eau sont doublées.
+- [ ] **Amis (Simulé) :** Échanger des cartes avec des amis AI pour compléter son Pokedex.
 - [ ] **Sonorisation :** Ajout de sons subtils pour l'ouverture des packs et les combats.
+- [ ] **Badges de Succès Visuels :** Afficher les icônes de succès débloqués sur le profil.

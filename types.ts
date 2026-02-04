@@ -27,7 +27,7 @@ export interface BalanceEntry {
 
 export interface Transaction {
   id: string;
-  type: 'buy' | 'sell' | 'evolve' | 'battle_win' | 'mission_reward';
+  type: 'buy' | 'sell' | 'evolve' | 'battle_win' | 'mission_reward' | 'auction_win';
   pokemonName: string;
   amount: number;
   timestamp: number;
@@ -43,12 +43,23 @@ export interface DailyMission {
   progress: number;
 }
 
+export interface Auction {
+  id: string;
+  pokemon: Pokemon;
+  currentBid: number;
+  highestBidder: string;
+  endTime: number;
+  isFinished: boolean;
+}
+
 export interface GameState {
   tokens: number;
   collection: Pokemon[];
   balanceHistory: BalanceEntry[];
   transactionHistory: Transaction[];
   deck: string[]; // instanceIds
+  pokedex: number[]; // Unique IDs discovered
+  activeAuctions: Auction[];
   dailyMissions: DailyMission[];
   totalSpent: number;
   totalEarned: number;

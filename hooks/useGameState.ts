@@ -1,13 +1,19 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { GameState, Pokemon, BalanceEntry, Rarity, ToastMessage, ToastType, Transaction, DailyMission } from '../types';
+import { GameState, Pokemon, BalanceEntry, Rarity, ToastMessage, ToastType, Transaction, DailyMission, Auction } from '../types';
 import { INITIAL_TOKENS, RARITY_CONFIG, ACHIEVEMENTS, DEFAULT_MISSIONS } from '../constants';
 import { fetchEvolutionData } from '../services/pokeApi';
 
 export const useGameState = () => {
   const [state, setState] = useState<GameState>(() => {
     const saved = localStorage.getItem('pokemarket_state');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Migrate old state if needed
+      if (!parsed.pokedex) parsed.pokedex = [];
+      if (!parsed.activeAuctions) parsed.activeAuctions = [];
+      return parsed;
+    }
     
     return {
       tokens: INITIAL_TOKENS,
@@ -15,6 +21,8 @@ export const useGameState = () => {
       balanceHistory: [{ timestamp: Date.now(), amount: INITIAL_TOKENS }],
       transactionHistory: [],
       deck: [],
+      pokedex: [],
+      activeAuctions: [],
       dailyMissions: DEFAULT_MISSIONS,
       totalSpent: 0,
       totalEarned: 0,
@@ -51,6 +59,91 @@ export const useGameState = () => {
     localStorage.setItem('pokemarket_state', JSON.stringify(state));
   }, [state]);
 
+  const updatePokedex = (pokemons: Pokemon[]) => {
+    setState(prev => {
+      const newIds = pokemons.map(p => p.id).filter(id => !prev.pokedex.includes(id));
+      if (newIds.length === 0) return prev;
+      return { ...prev, pokedex: [...prev.pokedex, ...newIds] };
+    });
+  };
+
+  // Auction Bid Simulation Ticker
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setState(prev => {
+        if (prev.activeAuctions.length === 0) return prev;
+        
+        const now = Date.now();
+        let tokensGained = 0;
+        let finishedAuctions: string[] = [];
+
+        const updatedAuctions = prev.activeAuctions.map(auction => {
+          if (auction.endTime <= now) {
+            if (!auction.isFinished) {
+              tokensGained += auction.currentBid;
+              finishedAuctions.push(auction.pokemon.name);
+              return { ...auction, isFinished: true };
+            }
+            return auction;
+          }
+
+          // Chance to bid
+          if (Math.random() > 0.7) {
+            const increment = Math.max(1, Math.floor(auction.pokemon.resaleValue * 0.1));
+            return {
+              ...auction,
+              currentBid: auction.currentBid + increment,
+              highestBidder: ['Red', 'Blue', 'Leaf', 'Ash', 'Gary', 'Misty', 'Brock'][Math.floor(Math.random() * 7)]
+            };
+          }
+          return auction;
+        });
+
+        // Cleanup finished auctions
+        const remainingAuctions = updatedAuctions.filter(a => !a.isFinished);
+        
+        if (tokensGained > 0) {
+          const newTokens = prev.tokens + tokensGained;
+          finishedAuctions.forEach(name => {
+             addToast(`Enchère terminée ! ${name} vendu.`, 'success');
+             addTransaction('auction_win', name, tokensGained);
+          });
+          return {
+            ...prev,
+            tokens: newTokens,
+            totalEarned: prev.totalEarned + tokensGained,
+            activeAuctions: remainingAuctions,
+            balanceHistory: updateBalanceHistory(newTokens, prev.balanceHistory)
+          };
+        }
+
+        return { ...prev, activeAuctions: updatedAuctions };
+      });
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [addToast, addTransaction]);
+
+  const startAuction = (pokemon: Pokemon, durationSec: number) => {
+    const newAuction: Auction = {
+      id: crypto.randomUUID(),
+      pokemon,
+      currentBid: pokemon.resaleValue,
+      highestBidder: 'Prix de départ',
+      endTime: Date.now() + durationSec * 1000,
+      isFinished: false
+    };
+
+    setState(prev => ({
+      ...prev,
+      collection: prev.collection.filter(p => p.instanceId !== pokemon.instanceId),
+      deck: prev.deck.filter(id => id !== pokemon.instanceId),
+      activeAuctions: [...prev.activeAuctions, newAuction]
+    }));
+
+    addToast(`${pokemon.name} est en vente aux enchères !`, 'info');
+  };
+
   // Mission progress updater
   const updateMissionProgress = useCallback((type: DailyMission['type'], amount: number = 1) => {
     setState(prev => {
@@ -82,41 +175,6 @@ export const useGameState = () => {
     });
   }, [addToast, addTransaction]);
 
-  // Dynamic Market Logic
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setState(prev => {
-        if (prev.collection.length === 0) return prev;
-        const newCollection = prev.collection.map(p => {
-          const change = 0.9 + Math.random() * 0.2;
-          const newValue = Math.max(1, Math.round(p.resaleValue * change));
-          return { ...p, resaleValue: newValue };
-        });
-        return { ...prev, collection: newCollection };
-      });
-      addToast("Le marché a fluctué ! Vérifiez vos prix.", "warning");
-    }, 60000);
-    return () => clearInterval(interval);
-  }, [addToast]);
-
-  // Check achievements
-  useEffect(() => {
-    const newAchievements: string[] = [];
-    if (state.collection.length >= 1 && !state.unlockedAchievements.includes('first_card')) newAchievements.push('first_card');
-    if (state.collection.length >= 10 && !state.unlockedAchievements.includes('collector_10')) newAchievements.push('collector_10');
-    if (state.collection.some(p => p.isShiny) && !state.unlockedAchievements.includes('shiny_hunter')) newAchievements.push('shiny_hunter');
-    if (state.totalEarned >= 500 && !state.unlockedAchievements.includes('tycoon')) newAchievements.push('tycoon');
-    if (state.collection.filter(p => p.types.includes('fire')).length >= 3 && !state.unlockedAchievements.includes('fire_master')) newAchievements.push('fire_master');
-
-    if (newAchievements.length > 0) {
-      setState(prev => ({ ...prev, unlockedAchievements: [...prev.unlockedAchievements, ...newAchievements] }));
-      newAchievements.forEach(id => {
-        const ach = ACHIEVEMENTS.find(a => a.id === id);
-        if (ach) addToast(`Succès Débloqué : ${ach.title} !`, 'success');
-      });
-    }
-  }, [state.collection, state.totalEarned, state.unlockedAchievements, addToast]);
-
   const updateBalanceHistory = (newAmount: number, history: BalanceEntry[]) => {
     const newEntry: BalanceEntry = { timestamp: Date.now(), amount: newAmount };
     return [...history, newEntry].slice(-20);
@@ -135,6 +193,7 @@ export const useGameState = () => {
     });
     addTransaction('buy', `${pokemons.length} Pokémon`, cost);
     updateMissionProgress('buy', pokemons.length);
+    updatePokedex(pokemons);
     addToast(`${pokemons.length} booster(s) ouvert(s) !`, 'success');
   };
 
@@ -233,6 +292,7 @@ export const useGameState = () => {
         totalSpent: prev.totalSpent + cost
       };
     });
+    updatePokedex([evolvedPokemon]);
     addTransaction('evolve', evolvedPokemon.name, cost);
     updateMissionProgress('evolve', 1);
     addToast(`${pokemon.name} a évolué en ${evolvedPokemon.name} !`, 'success');
@@ -259,6 +319,7 @@ export const useGameState = () => {
     handleEvolve,
     handleFreeTokens,
     handleBattleWin,
+    startAuction,
     toggleTheme
   };
 };

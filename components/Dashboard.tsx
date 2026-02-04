@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Coins, Library, Star, Gift, Award, CheckCircle2, History, ShoppingCart, Banknote, Target, Trophy } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { TrendingUp, Coins, Library, Star, Gift, Award, CheckCircle2, History, ShoppingCart, Banknote, Target, Trophy, PieChart as PieIcon } from 'lucide-react';
 import { GameState, Rarity } from '../types';
 import { ACHIEVEMENTS } from '../constants';
 
@@ -32,6 +32,15 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
     name: rarity,
     value: state.collection.filter(p => p.rarity === rarity).length,
   })).filter(d => d.value > 0);
+
+  // Type Distribution Data
+  const typesMap: Record<string, number> = {};
+  state.collection.forEach(p => {
+    p.types.forEach(t => {
+      typesMap[t] = (typesMap[t] || 0) + 1;
+    });
+  });
+  const typeData = Object.entries(typesMap).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value);
 
   return (
     <div id="dashboard-container" className="relative space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -75,18 +84,17 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
              </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><TrendingUp size={20} className="text-red-500" />Évolution du Solde</h3>
+          <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
+            <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><PieIcon size={24} className="text-blue-500" />Distribution par Type</h3>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={balanceData}>
-                  <defs><linearGradient id="colorTokens" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/><stop offset="95%" stopColor="#ef4444" stopOpacity={0}/></linearGradient></defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                  <XAxis dataKey="time" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', fontSize: '12px' }} itemStyle={{ color: '#f8fafc' }} />
-                  <Area type="monotone" dataKey="tokens" stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#colorTokens)" />
-                </AreaChart>
+                <BarChart data={typeData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={10} width={80} />
+                  <Tooltip cursor={{ fill: '#1e293b' }} contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b' }} />
+                  <Bar dataKey="value" fill="#ef4444" radius={[0, 4, 4, 0]} barSize={20} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -114,15 +122,12 @@ const Dashboard: React.FC<DashboardProps> = ({ state, onFreeTokens }) => {
              </div>
           </div>
           <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl">
-             <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3"><History size={24} className="text-blue-500" />Transactions</h3>
-             <div className="space-y-3">
-                {state.transactionHistory.slice(0, 5).map((t) => (
-                   <div key={t.id} className="flex justify-between items-center text-[10px]">
-                      <span className="text-slate-400 capitalize">{t.type}</span>
-                      <span className={`font-bold ${t.type.includes('win') || t.type.includes('sell') ? 'text-green-400' : 'text-red-400'}`}>{t.amount} $</span>
-                   </div>
-                ))}
-             </div>
+            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2"><PieIcon size={20} className="text-purple-500" />Rareté Collection</h3>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart><Pie data={rarityData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">{rarityData.map((entry, index) => (<Cell key={`cell-${index}`} fill={RARITY_COLORS[entry.name as Rarity]} />))}</Pie><Tooltip /></PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { LayoutDashboard, Library, ShoppingBag, TrendingUp, Menu, X, Github, Shield, Moon, Sun, Swords } from 'lucide-react';
+import { LayoutDashboard, Library, ShoppingBag, TrendingUp, Menu, X, Github, Shield, Moon, Sun, Swords, Grid, Gavel } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SidebarProps {
@@ -18,11 +18,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, navigateTo, tokens, theme,
 
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Tableau de bord' },
+    { id: 'pokedex', icon: Grid, label: 'Pokedex Global' },
     { id: 'deck', icon: Shield, label: 'Mon Équipe' },
     { id: 'battle', icon: Swords, label: 'Arène Combat' },
+    { id: 'auctions', icon: Gavel, label: 'Enchères' },
     { id: 'shop', icon: ShoppingBag, label: 'Market' },
     { id: 'collection', icon: Library, label: 'Collection' },
-    { id: 'analytics', icon: TrendingUp, label: 'Statistiques' },
   ];
 
   const handleNavClick = (id: string) => {
@@ -44,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, navigateTo, tokens, theme,
 
       <AnimatePresence>
         {isOpen && (
-          <M.aside 
+          <><M.aside 
             key="mobile-sidebar"
             initial={{ x: -300 }} 
             animate={{ x: 0 }} 
@@ -53,8 +54,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, navigateTo, tokens, theme,
           >
             <SidebarContent activeTab={activeTab} handleNavClick={handleNavClick} menuItems={menuItems} theme={theme} toggleTheme={toggleTheme} />
           </M.aside>
-        )}
-        {isOpen && (
           <M.div 
             key="mobile-overlay"
             className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[75] lg:hidden" 
@@ -62,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, navigateTo, tokens, theme,
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-          />
+          /></>
         )}
       </AnimatePresence>
     </>
@@ -101,7 +100,7 @@ const SidebarContent = ({ activeTab, handleNavClick, menuItems, theme, toggleThe
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-green-500" /><span className="text-[10px] font-bold text-slate-400">MARCHÉ OUVERT</span></div>
-          <a href="#" className="flex items-center gap-2 text-slate-600 hover:text-white text-[9px] font-bold transition-colors group"><Github size={12} /><span>VERSION 1.7.0 - STABLE</span></a>
+          <a href="#" className="flex items-center gap-2 text-slate-600 hover:text-white text-[9px] font-bold transition-colors group"><Github size={12} /><span>VERSION 1.8.0 - STABLE</span></a>
         </div>
     </div>
   </>
